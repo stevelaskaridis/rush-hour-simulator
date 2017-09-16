@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+	public float score = 100;
+
 	public void  UpdateCash(int served, int nonServed)
 	{
-		
+
+		const float cachePerServedClient = 10;
+
+		score += cachePerServedClient * served;
 	}
 
 	// Use this for initialization

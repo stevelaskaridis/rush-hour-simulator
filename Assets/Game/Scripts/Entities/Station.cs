@@ -19,12 +19,11 @@ public class Station : MonoBehaviour {
 	}
 
 	public StationData StationData;
-	public List<Rail> connections;
+	public List<Rail> connections = new List<Rail> ();
 
 	// Use this for initialization
 	void Start () {
 		StationData.load = 2;
-		connections = new List<Rail> ();
 	}
 	
 	// Update is called once per frame
