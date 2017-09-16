@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IBridge
 {
-	
+	Dictionary<string, Vector2> GetCitiesNamesAndCoords();
 }
