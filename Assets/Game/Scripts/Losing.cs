@@ -12,12 +12,10 @@ public class Losing : MonoBehaviour {
 
 	public void stopAll()
 	{
-		GameObject go = GameObject.Find("VerticalLayout");
-		go.SetActive(false);
+		GameObject.Find("PlaceWagonButton").SetActive(false);
+		GameObject.Find("RunSimulation").SetActive(false);
+		GameObject.Find("PlaceRailRoadButton").SetActive(false);
 		
-		go = GameObject.Find("Main Camera");
-		go.GetComponent<CameraController>().Interactable = false;
-		
+		GameObject.Find("Main Camera").GetComponent<CameraController>().Interactable = false;
 	}
-
 }
