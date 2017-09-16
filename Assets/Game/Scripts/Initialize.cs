@@ -30,14 +30,14 @@ public class Initialize : MonoBehaviour {
 			return;
 		}
 
-		/*
+		//*
 		foreach (var station in _mapper.Stations) {
 			GameObject stationGO = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 			stationGO.transform.SetParent (Map.transform);
 			stationGO.name = station.Value.name;
 			stationGO.transform.localScale = Vector3.one * 10.0f;
-			stationGO.transform.position = new Vector3 (station.Value.Position.x, station.Value.Position.y);
-		}//*/
+			stationGO.transform.position = new Vector3 (station.Value.Position.x, station.Value.Position.y, 0);
+		}/*/
 
 		var eligeable = _mapper.Stations.Select (i => i.Value)
 			.Where (d => d.load < 10);
@@ -54,6 +54,7 @@ public class Initialize : MonoBehaviour {
 		foreach (var additionalStation in additionalStations) {
 			InstantiateStation (additionalStation);
 		}
+		//*/
 	}
 
 	GameObject InstantiateStation(StationData station)

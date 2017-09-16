@@ -9,7 +9,7 @@ public class StationFetcher : MonoBehaviour
 {
     // Use this for initialization
     public void QueryForCities(Action<Dictionary<int, StationData>> callback)
-    {
+	{
         // TODO: get station names, ids and xy coordinates
         // create list of stationData
         // complete info with station load
@@ -21,7 +21,7 @@ public class StationFetcher : MonoBehaviour
     {
         string endpoint =
             string.Format(
-                "https://data.sbb.ch/api/records/1.0/search/?dataset=didok-liste&rows=10000&facet=nummer&facet=abkuerzung&facet=tunummer&facet=tuabkuerzung&facet=betriebspunkttyp&facet=verkehrsmittel&facet=dst_abk&facet=didok");
+                "https://data.sbb.ch/api/records/1.0/search/?dataset=didok-liste&rows=1000&facet=nummer&facet=abkuerzung&facet=tunummer&facet=tuabkuerzung&facet=betriebspunkttyp&facet=verkehrsmittel&facet=dst_abk&facet=didok");
 
         UnityWebRequest www = UnityWebRequest.Get(endpoint);
         yield return www.Send();
@@ -38,7 +38,6 @@ public class StationFetcher : MonoBehaviour
             var downloadedJson = www.downloadHandler.text;
 //			Debug.Log(getCitiesNamesAndCoords(getFieldsFromJsonString(downloadedJson)).Count);
             var results = myFoobar(downloadedJson);
-            Debug.Log(downloadedJson);
             callback(results);
             //StartCoroutine(GetStationLoadData(10000, 0, "asc", "dtv", results, callback));
 
@@ -55,7 +54,7 @@ public class StationFetcher : MonoBehaviour
             station.id = records["fields"]["nummer"];
             station.name = records["fields"]["name"];
 
-            station.Position = new Vector2(records["x_koord_nord"], records["y_koord_ost"]);
+			station.Position = new Vector2(records["fields"]["y_koord_ost"], records["fields"]["x_koord_nord"]);
             theDictList[station.id] = station;
         }
         return theDictList;

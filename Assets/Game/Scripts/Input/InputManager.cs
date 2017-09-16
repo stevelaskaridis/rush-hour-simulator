@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour {
 
+	private enum ToolState
+	{
+		NONE,
+		RAIL,
+		WAGON
+	}
+
 	public void OnSelectRailTool()
 	{
 
