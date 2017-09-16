@@ -81,4 +81,19 @@ public class InputManager : MonoBehaviour {
 			}
 		}
 	}
+
+	void CreateNewRail(Station stationFrom, Station stationTo)
+	{
+		if (stationTo.StationData.id < stationFrom.StationData.id) {
+			var temp = stationTo;
+			stationTo = stationFrom;
+			stationFrom = temp;
+		}
+
+		// TODO: if not already existing
+
+		var newGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		newGO.GetComponent<Renderer> ().material.color = Color.green;
+		newGO.transform.position = (stationTo.StationData.Position + stationFrom.StationData.Position) * 0.5f;
+	}
 }
