@@ -20,25 +20,33 @@ public class Rail : Track {
 		// new wagon for wagons1
 		GameObject newGO = (Instantiate(Resources.Load("TrainPrefab"))) as GameObject;
 		newGO.name = "train";
-		newGO.transform.parent = transform;
-		newGO.transform.localScale = new Vector3 (wagonSize.x,wagonSize.y,1);
-		newGO.transform.Rotate (new Vector3(0,0,Vector3.Angle ((wagonStartPos2 - wagonStartPos1).normalized, Vector3.right)));
+		//newGO.transform.localScale = new Vector3 (wagonSize.x,wagonSize.y,1);
+		//newGO.transform.parent = transform;
+
 		Vector3 newPos = wagonStartPos1 + new Vector3(0,0,-0.5f);
 		newGO.transform.position = newPos;
+		newGO.transform.rotation = GetProperRotationToForwardVector(wagonStartPos2, wagonStartPos1);
 		wagons1.Add(newGO.GetComponent<Train>());
 
 		// new wagon for wagons2
 		GameObject newGO2 = (Instantiate(Resources.Load("TrainPrefab"))) as GameObject;
 		newGO2.name = "train";
-		newGO2.transform.parent = transform;
-		newGO2.transform.localScale = new Vector3 (wagonSize.x,wagonSize.y,1);
-		newGO2.transform.Rotate (new Vector3(0,0,-Vector3.Angle ((wagonStartPos1 - wagonStartPos2).normalized, Vector3.right)));
+		//newGO2.transform.parent = transform;
+		//newGO2.transform.localScale = new Vector3 (wagonSize.x,wagonSize.y,1);
 		newPos = wagonStartPos2 + new Vector3(0,0,-0.5f);
 		newGO2.transform.position = newPos;
+		newGO2.transform.rotation = GetProperRotationToForwardVector(wagonStartPos1, wagonStartPos2);
 		wagons2.Add(newGO2.GetComponent<Train>());
 
 		// reset the wagon positions
-		ResetWagonPositions ();
+		// ResetWagonPositions ();
+	}
+
+	Quaternion GetProperRotationToForwardVector(Vector3 targetLocation, Vector3 startLocation){
+		Vector3 diff = targetLocation-startLocation;
+		diff.Normalize();
+		float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+		return Quaternion.Euler(0f, 0f, rot_z + 180);
 	}
 
 	public int Capacity(){
@@ -61,7 +69,7 @@ public class Rail : Track {
 		positionIncrementPerWagon = (wagonStartPos1 - wagonStartPos2).normalized * (wagonSize.x);
 		// start from endpos and then subtract from it for each wagon which is later in the list
 		endWagonPosition = wagonStartPos1 - positionIncrementPerWagon*Capacity();
-		foreach (var wagon in wagons1){
+		foreach (var wagon in wagons2){
 			wagon.MoveToPosition(endWagonPosition);
 			endWagonPosition = endWagonPosition + positionIncrementPerWagon;
 		}

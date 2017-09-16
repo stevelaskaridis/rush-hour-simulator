@@ -159,9 +159,9 @@ public class InputManager : MonoBehaviour {
 
 			int nonServedClients = station.Value.StationData.load;
 			foreach (var connection in station.Value.connections) {
-				nonServedClients -= 3;
-				//nonServedClients -= connection.Capacity;
-				//connection.StartSimulationRound()
+				//nonServedClients -= 3;
+				nonServedClients -= connection.Capacity();
+				connection.StartSimulation();
 			}
 
 			if (nonServedClients < 0)
