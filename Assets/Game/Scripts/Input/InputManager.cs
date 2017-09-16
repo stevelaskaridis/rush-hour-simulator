@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class InputManager : MonoBehaviour {
 
 	public Camera _camera;
-	public Toggle RailTool;
-	public Toggle WagonTool;
+	public Button RailTool;
+	public Button WagonTool;
 
 	private enum ToolState
 	{
@@ -23,25 +23,22 @@ public class InputManager : MonoBehaviour {
 	private void CancleTool()
 	{
 		_toolState = ToolState.NONE;
+		// unhighlight both button
 		_railEndPoint = null;
 	}
 
 	public void OnSelectRailTool()
 	{
 		CancleTool ();
-		WagonTool.isOn = false;
-		if (RailTool.isOn) {
-			_toolState = ToolState.RAIL;
-		}
+		// todo: highlight button
+		_toolState = ToolState.RAIL;
 	}
 
 	public void OnSelectWagonTool()
 	{
 		CancleTool ();
-		RailTool.isOn = false;
-		if (WagonTool.isOn) {
-			_toolState = ToolState.WAGON;
-		}
+		// todo: highlight button
+		_toolState = ToolState.WAGON;
 	}
 
 	// Use this for initialization
@@ -68,22 +65,34 @@ public class InputManager : MonoBehaviour {
 
 						if (_railEndPoint == null) {
 							_railEndPoint = station;
-						} else {
-							// create new path
+						} else if (_railEndPoint != station){
+							CreateNewRail (_railEndPoint, station);
+							_railEndPoint = null;
 						}
 					}
 				} else if (_toolState == ToolState.WAGON) {
 					var rail = info.transform.GetComponent<Rail> ();
 					if (rail != null) {
-						// create wagon
+						CreateNewWagon (rail);
 					}
 				}
 			}
 		}
 	}
 
+	void CreateNewWagon(Rail rail)
+	{
+		// TODO: check cost
+
+		var newGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		newGO.GetComponent<Renderer> ().material.color = Color.red;
+		newGO.transform.position = rail.transform.position;
+	}
+
 	void CreateNewRail(Station stationFrom, Station stationTo)
 	{
+		// TODO: check cost
+
 		if (stationTo.StationData.id < stationFrom.StationData.id) {
 			var temp = stationTo;
 			stationTo = stationFrom;
