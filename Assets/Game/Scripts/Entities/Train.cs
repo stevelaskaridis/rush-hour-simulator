@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class Train : TransportationVehicle {
 
-	List<Wagon> wagons;
 
+	public void AddWagon()
+	{
+
+	}
 
 	// Use this for initialization
 	void Start () {

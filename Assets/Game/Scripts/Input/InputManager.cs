@@ -43,7 +43,7 @@ public class InputManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		existingRails = new HashSet<uint> ();
+		existingRails = new Dictionary<uint, Rail> ();
 	}
 	
 	// Update is called once per frame
@@ -83,15 +83,10 @@ public class InputManager : MonoBehaviour {
 	void CreateNewWagon(Rail rail)
 	{
 		// TODO: check cost
-
-		var newGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
-		newGO.name = "train";
-		newGO.GetComponent<Renderer> ().material.color = Color.red;
-		newGO.transform.position = rail.transform.position;
-		newGO.AddComponent<Train> ();
+		rail.AddWagon();
 	}
 
-	HashSet<uint> existingRails;
+	Dictionary<uint, Rail> existingRails;
 
 	void CreateNewRail(Station stationFrom, Station stationTo)
 	{
@@ -104,20 +99,19 @@ public class InputManager : MonoBehaviour {
 		}
 
 		uint connection = (uint)(stationTo.StationData.id) << 16 | (uint)(stationFrom.StationData.id);
-		if (existingRails.Contains (connection)) {
+		if (existingRails.ContainsKey (connection)) {
 			return;
+		} else {
+			var railGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
+			railGO.name = "rail_" + stationFrom.name + "-" + stationTo.name;
+			railGO.transform.position = (stationTo.StationData.Position + stationFrom.StationData.Position) * 0.5f;
+			var rail = railGO.AddComponent<Rail> ();
+			rail.SetEndPoints (stationFrom, stationTo);
+
+			stationFrom.GetComponent<Renderer> ().material.color = Color.green;
+			stationTo.GetComponent<Renderer> ().material.color = Color.green;
+
+			existingRails.Add (connection, rail);
 		}
-
-		existingRails.Add (connection);
-
-		// TODO: if not already existing
-
-		var newGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		newGO .name = "rail_" + stationFrom.name + "-" + stationTo.name;
-		newGO.transform.position = (stationTo.StationData.Position + stationFrom.StationData.Position) * 0.5f;
-		newGO.AddComponent<Rail> ().SetEndPoints(stationFrom, stationTo);
-
-		stationFrom.GetComponent<Renderer> ().material.color = Color.green;
-		stationTo.GetComponent<Renderer> ().material.color = Color.green;
 	}
 }

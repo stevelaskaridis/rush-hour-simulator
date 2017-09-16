@@ -7,6 +7,17 @@ public class Rail : Track {
 	Station _stationFrom;
 	Station _stationTo;
 
+	List<Train> wagons;
+
+	public void AddWagon()
+	{
+		var newGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		newGO.name = "train";
+		newGO.GetComponent<Renderer> ().material.color = Color.red;
+		newGO.transform.position = transform.position;
+		newGO.AddComponent<Train> ();
+	}
+
 	public void SetEndPoints(Station stationFrom, Station stationTo)
 	{
 		_stationFrom = stationFrom;
