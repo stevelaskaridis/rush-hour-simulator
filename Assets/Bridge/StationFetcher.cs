@@ -5,14 +5,23 @@ using UnityEngine.Networking;
 using SimpleJSON;
 using System;
 
-public class foo : MonoBehaviour {
-	private float x = 0;
+public class StationFetcher : MonoBehaviour {
+	
 	// Use this for initialization
-	public void QueryForCities (Action<Dictionary<string, Vector2>> callback) {
-		StartCoroutine (GetText (10000, 0, "asc", "dtv", callback));
+	public void QueryForCities (Action<Dictionary<int, StationData>> callback)
+	{
+		// TODO: get station names, ids and xy coordinates
+		// create list of stationData
+		// complete info with station load
+
 	}
 
-	IEnumerator GetText(int rowLimit, int startOffset, string sortOrder, string sortingField, Action<Dictionary<string, Vector2>> callback) {
+	/*IEnumerator GetStationPositionData(Action<List<StationData>> callback)
+	{
+		//StartCoroutine (GetStationLoadData (10000, 0, "asc", "dtv", GetStationPositionData));
+	}//*/
+
+	IEnumerator GetStationLoadData(int rowLimit, int startOffset, string sortOrder, string sortingField, Action<List<StationData>> callback) {
 		string sortingPrefix = "";
 		switch (sortOrder.ToLower()) {
 		case "asc":
@@ -40,12 +49,13 @@ public class foo : MonoBehaviour {
 		}
 		else {
 			// Show results as text
-			Debug.Log ("logging success");
 			var downloadedJson = www.downloadHandler.text;
 //			Debug.Log(getCitiesNamesAndCoords(getFieldsFromJsonString(downloadedJson)).Count);
 			var results = getCitiesNamesAndCoords (getFieldsFromJsonString (downloadedJson));
+			Debug.Log (downloadedJson);
 
-			callback (results);
+
+			callback (null);
 
 
 
@@ -74,8 +84,8 @@ public class foo : MonoBehaviour {
 			theDict ["dwv"] = record ["fields"] ["dwv"];
 			theDict ["dtv"] = record ["fields"] ["dtv"];
 			theDict ["timestamp"] = record ["record_timestamp"];
-			theDict ["coord_x"] = record ["fields"] ["geopos"] [0];
-			theDict ["coord_y"] = record ["fields"] ["geopos"] [1];
+			theDict ["coord_x"] = record ["fields"] ["x_koord_nord"];
+			theDict ["coord_y"] = record ["fields"] ["y_koord_ost"];
 			theDictList [theDict ["code"]] = theDict;
 		}
 		return theDictList;
@@ -115,7 +125,7 @@ public class foo : MonoBehaviour {
 		var theDict = new Dictionary<string, Vector2> ();
 		foreach (KeyValuePair<string, Dictionary<string, string>> dict in records) {
 			var record = dict.Value;
-			theDict [record["name"]] = new Vector2 (float.Parse(record ["coord_x"]), float.Parse(record ["coord_y"]));
+			theDict [record["name"]] = new Vector2 (float.Parse(record ["coord_x"]), float.Parse(record ["coord_y"])); // TODO: replace 5 with load
 		}
 		return theDict;
 	}

@@ -16,9 +16,9 @@ public class BridgeImplementation : IBridge {
 
 	}
 
-	public void GetCitiesNamesAndCoords(Action<Dictionary<string, Vector2>> callback) {
+	public void GetCitiesNamesAndCoords(Action<Dictionary<int, StationData>> callback) {
 		var go = new GameObject ();
-		var bar = go.AddComponent<foo> ();
+		var bar = go.AddComponent<StationFetcher> ();
 		bar.QueryForCities (callback);
 	}
 }
