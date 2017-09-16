@@ -8,16 +8,12 @@ using System;
 public class StationFetcher : MonoBehaviour
 {
 
-	public void Start() {
-		QueryForCitiesPopularity (null);
-	}
+//	public void Start() {
+//		QueryForCitiesPopularity (null);
+//	}
 
     public void QueryForCities(Action<Dictionary<int, StationData>> callback)
 	{
-        // TODO: get station names, ids and xy coordinates
-        // create list of stationData
-        // complete info with station load
-
         StartCoroutine (GetStationPositionData (callback));
     }
 
@@ -117,10 +113,10 @@ public class StationFetcher : MonoBehaviour
             // Show results as text
             var downloadedJson = www.downloadHandler.text;
             var results = getCitiesNamesAndPopularity(getFieldsFromJsonString(downloadedJson));
-			foreach (var v in results.Values)
-				Debug.Log ("Load of " + v.id + " is "+ v.load);
+//			foreach (var v in results.Values)
+//				Debug.Log ("Load of " + v.id + " is "+ v.load);
 
-//            callback(results);
+            callback(results);
         }
     }
 
