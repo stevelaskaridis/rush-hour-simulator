@@ -1,16 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Losing : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+
+	void Start()
+	{
+		stopAll();
 		
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+	public void stopAll()
+	{
+		GameObject.Find("PlaceWagonButton").SetActive(false);
+		GameObject.Find("RunSimulation").SetActive(false);
+		GameObject.Find("PlaceRailRoadButton").SetActive(false);
 		
+		GameObject.Find("Main Camera").GetComponent<CameraController>().Interactable = false;
 	}
 }
