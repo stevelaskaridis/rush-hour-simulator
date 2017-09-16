@@ -1,4 +1,4 @@
-﻿	using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,36 +7,122 @@ public class Rail : Track {
 	Station _stationFrom;
 	Station _stationTo;
 
-	List<Train> wagons;
+	List<Train> wagons1;
+	List<Train> wagons2;
+	Vector2 wagonSize = new Vector2(0.5f,0.5f); // should have ratio 1:1 (x:y)
+	public GameObject trainObject;
+
+	Vector3 wagonStartPos1;
+	Vector3 wagonStartPos2;
 
 	public void AddWagon()
-	{
-		var newGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
+	{	
+		// new wagon for wagons1
+		GameObject newGO = (Instantiate(Resources.Load("TrainPrefab"))) as GameObject;
 		newGO.name = "train";
-		newGO.GetComponent<Renderer> ().material.color = Color.red;
-		newGO.transform.position = transform.position;
-		newGO.AddComponent<Train> ();
+		newGO.transform.parent = transform;
+		newGO.transform.localScale = new Vector3 (wagonSize.x,wagonSize.y,1);
+		newGO.transform.Rotate (new Vector3(0,0,Vector3.Angle ((wagonStartPos2 - wagonStartPos1).normalized, Vector3.right)));
+		Vector3 newPos = wagonStartPos1 + new Vector3(0,0,-0.5f);
+		newGO.transform.position = newPos;
+		wagons1.Add(newGO.GetComponent<Train>());
+
+		// new wagon for wagons2
+		GameObject newGO2 = (Instantiate(Resources.Load("TrainPrefab"))) as GameObject;
+		newGO2.name = "train";
+		newGO2.transform.parent = transform;
+		newGO2.transform.localScale = new Vector3 (wagonSize.x,wagonSize.y,1);
+		newGO2.transform.Rotate (new Vector3(0,0,-Vector3.Angle ((wagonStartPos1 - wagonStartPos2).normalized, Vector3.right)));
+		newPos = wagonStartPos2 + new Vector3(0,0,-0.5f);
+		newGO2.transform.position = newPos;
+		wagons2.Add(newGO2.GetComponent<Train>());
+
+		// reset the wagon positions
+		ResetWagonPositions ();
 	}
+
+	public int Capacity(){
+		return wagons1.Count; // wagons1 and wagons2 have same length
+	}
+
+	public void StartSimulation(){
+		/// wagons1
+		// start moving the wagons to the other side of the rail
+		Vector3 positionIncrementPerWagon = (wagonStartPos2 - wagonStartPos1).normalized * (wagonSize.x);
+		// start from endpos and then subtract from it for each wagon which is later in the list
+		Vector3 endWagonPosition = wagonStartPos2 - positionIncrementPerWagon*Capacity();
+		foreach (var wagon in wagons1){
+			wagon.MoveToPosition(endWagonPosition);
+			endWagonPosition = endWagonPosition + positionIncrementPerWagon;
+		}
+
+		/// wagons2
+		// start moving the wagons to the other side of the rail
+		positionIncrementPerWagon = (wagonStartPos1 - wagonStartPos2).normalized * (wagonSize.x);
+		// start from endpos and then subtract from it for each wagon which is later in the list
+		endWagonPosition = wagonStartPos1 - positionIncrementPerWagon*Capacity();
+		foreach (var wagon in wagons1){
+			wagon.MoveToPosition(endWagonPosition);
+			endWagonPosition = endWagonPosition + positionIncrementPerWagon;
+		}
+	}
+
+	public void ResetWagonPositions(){
+		// reset all wagons to initial positions
+		/// wagons1
+		Vector3 currentWagonPosition = wagonStartPos1; // start from startpos and then add onto it for each wagon
+		Vector3 positionIncrementPerWagon = (wagonStartPos2 - wagonStartPos1).normalized * (wagonSize.x);
+		foreach (var wagon in wagons1){
+			wagon.TeleportToPosition (currentWagonPosition);
+			currentWagonPosition = currentWagonPosition + positionIncrementPerWagon;
+		}
+
+		/// wagons2
+		currentWagonPosition = wagonStartPos2; // start from startpos and then add onto it for each wagon
+		positionIncrementPerWagon = (wagonStartPos1 - wagonStartPos2).normalized * (wagonSize.x);
+		foreach (var wagon in wagons2){
+			wagon.TeleportToPosition (currentWagonPosition);
+			currentWagonPosition = currentWagonPosition + positionIncrementPerWagon;
+		}
+	}
+
 
 	public void SetEndPoints(Station stationFrom, Station stationTo)
 	{
+		var railGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		railGO.name = "view";
+		railGO.transform.SetParent (transform);
+		railGO.transform.position = (stationTo.StationData.Position + stationFrom.StationData.Position) * 0.5f;
+
 		_stationFrom = stationFrom;
 		_stationTo = stationTo;
 
-
 		var fromTo = _stationTo.StationData.Position - _stationFrom.StationData.Position;
 		var distance = fromTo.magnitude;
-		transform.localScale = new Vector3(0.015f, 1f, distance);
-		transform.position = _stationFrom.StationData.Position + (fromTo / 2f);
-		transform.LookAt(_stationTo.StationData.Position);
+		railGO.transform.localScale = new Vector3(0.015f, 1f, distance);
+		railGO.transform.position = _stationFrom.StationData.Position + (fromTo / 2f);
+		railGO.transform.LookAt(_stationTo.StationData.Position);
 
-		var material = GetComponent<Renderer> ().material;
+		var material = railGO.GetComponent<Renderer> ().material;
 		material= new Material(Shader.Find("Unlit/Color"));
 		material.color = Color.black;
+
+		// add collider from visualization also to the rail
+		var collider = gameObject.AddComponent<BoxCollider> ();
+		collider.center = railGO.GetComponent<BoxCollider> ().center;
+		collider.size = railGO.GetComponent<BoxCollider> ().size;
+
+
+		// start at two wagons offset from the station
+		Vector3 initialWagonOffsetFromStations = new Vector3(0,0,0);//(_stationFrom.StationData.Position - _stationTo.StationData.Position).normalized * wagonSize.x * 2;
+		wagonStartPos1 = _stationFrom.StationData.Position + initialWagonOffsetFromStations;
+		wagonStartPos2 = _stationTo.StationData.Position - initialWagonOffsetFromStations;
 	}
 
 	// Use this for initialization
 	void Start () {
+		wagons1 = new List<Train> ();
+		wagons2 = new List<Train> ();
 	}
 	
 	// Update is called once per frame
