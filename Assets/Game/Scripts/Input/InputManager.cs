@@ -100,6 +100,7 @@ public class InputManager : MonoBehaviour {
 	void updateScore()
 	{
 		ScoreText.text = "Your Budget: " + Player.score + " -CHF";
+		ScoreText.fontSize = 20;
 	}
 
 	void CreateNewWagon(Rail rail)
