@@ -19,13 +19,15 @@ public class StationFetcher : MonoBehaviour
 
     IEnumerator GetStationPositionData(Action<Dictionary<int, StationData>> callback)
     {
+        string apikey = "apikey=e2e01b388967105bd0911fc98c1d8a5cf133c853e645a4a7f5b0f761";
+        string rows = "rows=" + 10000;
         string endpoint =
             string.Format(
-                "https://data.sbb.ch/api/records/1.0/search/?dataset=didok-liste&rows=1000&facet=nummer&facet=abkuerzung&facet=tunummer&facet=tuabkuerzung&facet=betriebspunkttyp&facet=verkehrsmittel&facet=dst_abk&facet=didok");
+                "https://data.sbb.ch/api/records/1.0/search/?" + apikey + "&" + rows +
+                "&dataset=didok-liste&q=zug&lang=en&facet=nummer&facet=abkuerzung&facet=tunummer&facet=tuabkuerzung&facet=betriebspunkttyp&facet=verkehrsmittel&facet=dst_abk&facet=didok&exclude.verkehrsmittel=Bus&exclude.verkehrsmittel=Luftseilbahn&exclude.verkehrsmittel=Schiff&exclude.verkehrsmittel=Tram&exclude.verkehrsmittel=Standseilbahn&exclude.verkehrsmittel=Zahnradbahn&exclude.verkehrsmittel=Metro&exclude.verkehrsmittel=Standseilbahn_Luftseilbahn&exclude.verkehrsmittel=Standseilbahn_Bus");
 
         UnityWebRequest www = UnityWebRequest.Get(endpoint);
         yield return www.Send();
-
 
         if (www.isNetworkError)
         {
