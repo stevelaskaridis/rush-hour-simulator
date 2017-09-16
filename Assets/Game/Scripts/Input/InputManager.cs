@@ -1,8 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour {
+
+	public Camera _camera;
+	public Toggle RailTool;
+	public Toggle WagonTool;
 
 	private enum ToolState
 	{
@@ -17,20 +22,26 @@ public class InputManager : MonoBehaviour {
 
 	private void CancleTool()
 	{
+		_toolState = ToolState.NONE;
 		_railEndPoint = null;
 	}
 
-	public void OnSelectRailTool(bool enabled)
+	public void OnSelectRailTool()
 	{
-		_toolState = ToolState.NONE;
-		if (enabled) {
+		CancleTool ();
+		WagonTool.isOn = false;
+		if (RailTool.isOn) {
 			_toolState = ToolState.RAIL;
 		}
 	}
 
 	public void OnSelectWagonTool()
 	{
-		_toolState = ToolState.WAGON;
+		CancleTool ();
+		RailTool.isOn = false;
+		if (WagonTool.isOn) {
+			_toolState = ToolState.WAGON;
+		}
 	}
 
 	// Use this for initialization
@@ -40,6 +51,34 @@ public class InputManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if(_toolState == ToolState.NONE) {
+			return;
+		}
+			
+		if (Input.GetMouseButtonDown (0)) {
+
+			RaycastHit info;
+			Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+
+			if (Physics.Raycast (ray, out info)) {
+				
+				if (_toolState == ToolState.RAIL) {
+					var station = info.transform.GetComponent<Station> ();
+					if (station != null) {
+
+						if (_railEndPoint == null) {
+							_railEndPoint = station;
+						} else {
+							// create new path
+						}
+					}
+				} else if (_toolState == ToolState.WAGON) {
+					var rail = info.transform.GetComponent<Rail> ();
+					if (rail != null) {
+						// create wagon
+					}
+				}
+			}
+		}
 	}
 }
