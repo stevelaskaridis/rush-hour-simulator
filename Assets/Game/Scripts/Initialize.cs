@@ -47,7 +47,7 @@ public class Initialize : MonoBehaviour {
 
 		InputManager.Mapper = _mapper;
 
-		int numberOfAddStations = 10;
+		int numberOfAddStations = 4;
 		for (int i = 0; i < numberOfAddStations; i++) {
 			InputManager.GetClosestStation ();
 		}
