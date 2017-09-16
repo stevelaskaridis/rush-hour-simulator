@@ -9,11 +9,16 @@ public class Rail : Track {
 
 	List<Train> wagons1;
 	List<Train> wagons2;
-	Vector2 wagonSize = new Vector2(0.5f,0.5f); // should have ratio 1:1 (x:y)
+	// Vector2 wagonSize = new Vector2(1f,1f); // should have ratio 1:1 (x:y)
 	public GameObject trainObject;
+
+	float wagonXDimension = 1;
+	float wagonScale = 1;
 
 	Vector3 wagonStartPos1;
 	Vector3 wagonStartPos2;
+
+	public int capacityPerWagon = 200;
 
 	public void AddWagon()
 	{	
@@ -23,6 +28,8 @@ public class Rail : Track {
 		newGO.layer = SortingLayer.NameToID ("Train");
 		//newGO.transform.localScale = new Vector3 (wagonSize.x,wagonSize.y,1);
 		//newGO.transform.parent = transform;
+		wagonXDimension = newGO.transform.GetComponent<SpriteRenderer>().sprite.bounds.size.x;
+		wagonScale = newGO.transform.localScale.x;
 
 		Vector3 newPos = wagonStartPos1 + new Vector3(0,0,-0.5f);
 		newGO.transform.position = newPos;
@@ -51,16 +58,27 @@ public class Rail : Track {
 	}
 
 	public int Capacity(){
+		return wagons1.Count * capacityPerWagon; // wagons1 and wagons2 have same length
+	}
+
+	public int CurrentNumberOfWagons(){
 		return wagons1.Count; // wagons1 and wagons2 have same length
+	}
+
+	// the maximum number of wagons this track allows based on the track length
+	public int MaxNrOfWagons(){
+		// return some really smart calculations <3
+		int maxNrWagons = Mathf.CeilToInt((_stationTo.StationData.load + _stationFrom.StationData.load) / capacityPerWagon);
+		return maxNrWagons;
 	}
 
 	public void StartSimulation(){
 		ResetWagonPositions ();
 		/// wagons1
 		// start moving the wagons to the other side of the rail
-		Vector3 positionIncrementPerWagon = (wagonStartPos2 - wagonStartPos1).normalized * (wagonSize.x);
+		Vector3 positionIncrementPerWagon = (wagonStartPos2 - wagonStartPos1).normalized * (wagonXDimension*wagonScale);
 		// start from endpos and then subtract from it for each wagon which is later in the list
-		Vector3 endWagonPosition = wagonStartPos2 - positionIncrementPerWagon*Capacity();
+		Vector3 endWagonPosition = wagonStartPos2;// - positionIncrementPerWagon* wagons1.Count(); // looks better in the long run if it actually reaches the station
 		foreach (var wagon in wagons1){
 			endWagonPosition.z = -0.5f;
 			wagon.MoveToPosition(endWagonPosition);
@@ -69,9 +87,9 @@ public class Rail : Track {
 
 		/// wagons2
 		// start moving the wagons to the other side of the rail
-		positionIncrementPerWagon = (wagonStartPos1 - wagonStartPos2).normalized * (wagonSize.x);
+		positionIncrementPerWagon = (wagonStartPos1 - wagonStartPos2).normalized * (wagonXDimension*wagonScale);
 		// start from endpos and then subtract from it for each wagon which is later in the list
-		endWagonPosition = wagonStartPos1 - positionIncrementPerWagon*Capacity();
+		endWagonPosition = wagonStartPos1;// - positionIncrementPerWagon * wagons1.Count; // looks better in the long run if it actually reaches the station
 		foreach (var wagon in wagons2){
 			endWagonPosition.z = -0.5f;
 			wagon.MoveToPosition(endWagonPosition);
@@ -83,7 +101,7 @@ public class Rail : Track {
 		// reset all wagons to initial positions
 		/// wagons1
 		Vector3 currentWagonPosition = wagonStartPos1; // start from startpos and then add onto it for each wagon
-		Vector3 positionIncrementPerWagon = (wagonStartPos2 - wagonStartPos1).normalized * (wagonSize.x);
+		Vector3 positionIncrementPerWagon = (wagonStartPos2 - wagonStartPos1).normalized * (wagonXDimension*wagonScale);
 		foreach (var wagon in wagons1){
 			currentWagonPosition.z = -0.5f;
 			wagon.TeleportToPosition (currentWagonPosition);
@@ -92,7 +110,7 @@ public class Rail : Track {
 
 		/// wagons2
 		currentWagonPosition = wagonStartPos2; // start from startpos and then add onto it for each wagon
-		positionIncrementPerWagon = (wagonStartPos1 - wagonStartPos2).normalized * (wagonSize.x);
+		positionIncrementPerWagon = (wagonStartPos1 - wagonStartPos2).normalized * (wagonXDimension*wagonScale);
 		foreach (var wagon in wagons2){
 			currentWagonPosition.z = -0.5f;
 			wagon.TeleportToPosition (currentWagonPosition);

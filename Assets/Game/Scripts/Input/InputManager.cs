@@ -98,17 +98,24 @@ public class InputManager : MonoBehaviour {
 
 	void updateScore()
 	{
-		ScoreText.text = "your budget: " + Player.score + " -CHF";
+		ScoreText.text = "Your Budget: " + Player.score + " -CHF";
 	}
 
 	void CreateNewWagon(Rail rail)
 	{
 		const float wagonCost = 10f;
 
-		if (Player.score < wagonCost) {
+		if (Player.score < wagonCost) { // check if enough money
 			ScoreText.color = Color.red;
 			return;
 		}
+
+		if (rail.CurrentNumberOfWagons() >= rail.MaxNrOfWagons()) { // also check if rail still has room for more trains
+			Debug.Log("Too many wagons already on this track, I'm not gonna put any more");
+			// have some player information here that its not possible
+			return;
+		}
+
 		Player.score -= wagonCost;
 		updateScore();
 
@@ -174,7 +181,7 @@ public class InputManager : MonoBehaviour {
 			if (nonServedClients > 0) {
 				foreach (var connection in station.Value.connections) {
 					//nonServedClients -= 3;
-					nonServedClients -= connection.Capacity () * 200;
+					nonServedClients -= connection.Capacity ();
 					connection.StartSimulation ();
 				}
 
@@ -239,7 +246,7 @@ public class InputManager : MonoBehaviour {
 				return;
 			}
 
-			var additionalStations = new List<StationData> ();
+			// var additionalStations = new List<StationData> (); // what was the idea here?!
 			int rand = UnityEngine.Random.Range (0, eligeable.Count()-1);
 			InstantiateStation(eligeable.ElementAt(rand));
 			return;

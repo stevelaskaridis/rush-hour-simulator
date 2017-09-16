@@ -8,7 +8,7 @@ public class Train : TransportationVehicle {
 	Vector3 endPoint;
 	float startTime;
 	float duration = 10.0f;
-	float movementStopEpsilon = 1f;
+	float movementStopEpsilon = 0.00001f;
 	bool isMoving = false;
 
 	// Use this for initialization
@@ -24,7 +24,7 @@ public class Train : TransportationVehicle {
 			transform.position = Vector3.Lerp (startPoint, endPoint, (Time.time - startTime) / duration);
 			if ((transform.position - endPoint).sqrMagnitude < movementStopEpsilon || (Time.time - startTime) / duration > 1) {
 				isMoving = false;
-				transform.position = startPoint;
+				//transform.position = startPoint; // hard reset for debug purposes
 			}
 		}
 	}
@@ -34,6 +34,7 @@ public class Train : TransportationVehicle {
 		startPoint = transform.position;
 		endPoint = position;
 		isMoving = true;
+		startTime = Time.time;
 	}
 
 	public void TeleportToPosition(Vector3 position){
