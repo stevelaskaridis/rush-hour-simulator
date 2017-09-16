@@ -71,7 +71,7 @@ public class StationFetcher : MonoBehaviour
             station.id = records["fields"]["didok85"];
             station.name = records["fields"]["name"];
 
-			station.Position = new Vector2(records["fields"]["y_koord_ost"], records["fields"]["x_koord_nord"]);
+			station.Position = new Vector3(records["fields"]["y_koord_ost"], records["fields"]["x_koord_nord"], Mapper.Epsilon);
             theDictList[station.id] = station;
         }
         return theDictList;

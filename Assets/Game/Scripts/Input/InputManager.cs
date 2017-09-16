@@ -43,7 +43,7 @@ public class InputManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		existingRails = new Dictionary<uint, Rail> ();
 	}
 	
 	// Update is called once per frame
@@ -58,7 +58,7 @@ public class InputManager : MonoBehaviour {
 			Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 
 			if (Physics.Raycast (ray, out info)) {
-				
+				Debug.Log ("hit!");
 				if (_toolState == ToolState.RAIL) {
 					var station = info.transform.GetComponent<Station> ();
 					if (station != null) {
@@ -83,11 +83,10 @@ public class InputManager : MonoBehaviour {
 	void CreateNewWagon(Rail rail)
 	{
 		// TODO: check cost
-
-		var newGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
-		newGO.GetComponent<Renderer> ().material.color = Color.red;
-		newGO.transform.position = rail.transform.position;
+		rail.AddWagon();
 	}
+
+	Dictionary<uint, Rail> existingRails;
 
 	void CreateNewRail(Station stationFrom, Station stationTo)
 	{
@@ -99,10 +98,20 @@ public class InputManager : MonoBehaviour {
 			stationFrom = temp;
 		}
 
-		// TODO: if not already existing
+		uint connection = (uint)(stationTo.StationData.id) << 16 | (uint)(stationFrom.StationData.id);
+		if (existingRails.ContainsKey (connection)) {
+			return;
+		} else {
+			var railGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
+			railGO.name = "rail_" + stationFrom.name + "-" + stationTo.name;
+			railGO.transform.position = (stationTo.StationData.Position + stationFrom.StationData.Position) * 0.5f;
+			var rail = railGO.AddComponent<Rail> ();
+			rail.SetEndPoints (stationFrom, stationTo);
 
-		var newGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
-		newGO.GetComponent<Renderer> ().material.color = Color.green;
-		newGO.transform.position = (stationTo.StationData.Position + stationFrom.StationData.Position) * 0.5f;
+			stationFrom.GetComponent<Renderer> ().material.color = Color.green;
+			stationTo.GetComponent<Renderer> ().material.color = Color.green;
+
+			existingRails.Add (connection, rail);
+		}
 	}
 }
