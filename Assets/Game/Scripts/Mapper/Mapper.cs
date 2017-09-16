@@ -5,14 +5,16 @@ using System;
 
 public class Mapper
 {
+	static public float Epsilon = -0.1f;
+
 	public Dictionary<int, StationData> Stations;
 
-	private Vector2 _baselNew = new Vector2 (-130.3f, 275.1f);
-	private Vector2 _genevaNew = new Vector2 (-529f, -226.8f);
+	private Vector3 _baselNew = new Vector3 (-130.3f, 275.1f, Epsilon);
+	private Vector3 _genevaNew = new Vector3 (-529f, -226.8f, Epsilon);
 
 	// TODO update these
-	private Vector2 _baselOld = new Vector2 (612173.0f, 266858.0f);
-	private Vector2 _genevaOld = new Vector2 (499744.0f, 117961.0f);
+	private Vector3 _baselOld = new Vector3 (612173.0f, 266858.0f, Epsilon);
+	private Vector3 _genevaOld = new Vector3 (499744.0f, 117961.0f, Epsilon);
 	float _scale;
 	Vector2 _offset;
 
@@ -42,7 +44,7 @@ public class Mapper
 			var genevaNewToStationNew = genevaOldToStationOld * _scale;
 
 			var stationNew = _genevaNew + genevaNewToStationNew;
-			station.Value.Position = new Vector2 (stationNew.x, stationNew.y);
+			station.Value.Position = stationNew;
 		}
 			
 	}

@@ -43,7 +43,7 @@ public class InputManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		existingRails = new HashSet<uint> ();
 	}
 	
 	// Update is called once per frame
@@ -58,7 +58,7 @@ public class InputManager : MonoBehaviour {
 			Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 
 			if (Physics.Raycast (ray, out info)) {
-				
+				Debug.Log ("hit!");
 				if (_toolState == ToolState.RAIL) {
 					var station = info.transform.GetComponent<Station> ();
 					if (station != null) {
@@ -85,9 +85,13 @@ public class InputManager : MonoBehaviour {
 		// TODO: check cost
 
 		var newGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		newGO.name = "train";
 		newGO.GetComponent<Renderer> ().material.color = Color.red;
 		newGO.transform.position = rail.transform.position;
+		newGO.AddComponent<Train> ();
 	}
+
+	HashSet<uint> existingRails;
 
 	void CreateNewRail(Station stationFrom, Station stationTo)
 	{
@@ -99,10 +103,21 @@ public class InputManager : MonoBehaviour {
 			stationFrom = temp;
 		}
 
+		uint connection = (uint)(stationTo.StationData.id) << 16 | (uint)(stationFrom.StationData.id);
+		if (existingRails.Contains (connection)) {
+			return;
+		}
+
+		existingRails.Add (connection);
+
 		// TODO: if not already existing
 
-		var newGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
-		newGO.GetComponent<Renderer> ().material.color = Color.green;
+		var newGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+		newGO .name = "rail_" + stationFrom.name + "-" + stationTo.name;
 		newGO.transform.position = (stationTo.StationData.Position + stationFrom.StationData.Position) * 0.5f;
+		newGO.AddComponent<Rail> ().SetEndPoints(stationFrom, stationTo);
+
+		stationFrom.GetComponent<Renderer> ().material.color = Color.green;
+		stationTo.GetComponent<Renderer> ().material.color = Color.green;
 	}
 }

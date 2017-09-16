@@ -7,7 +7,7 @@ public class StationData
 	public string name;
 	public int id;
 	public int load;
-	public Vector2 Position;
+	public Vector3 Position;
 }
 
 public class Station : MonoBehaviour {

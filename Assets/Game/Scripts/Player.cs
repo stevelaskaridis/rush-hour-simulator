@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Train : TransportationVehicle {
-
-	List<Wagon> wagons;
-
+public class Player : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

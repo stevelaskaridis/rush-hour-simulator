@@ -20,7 +20,7 @@ public class StationFetcher : MonoBehaviour
     IEnumerator GetStationPositionData(Action<Dictionary<int, StationData>> callback)
     {
         string apikey = "e2e01b388967105bd0911fc98c1d8a5cf133c853e645a4a7f5b0f761";
-        string rows = "rows=" + 10000;
+        string rows = "rows=" + 10;
         string endpoint =
             string.Format(
                 "https://data.sbb.ch/api/records/1.0/search/?" + "apikey="+apikey + "&" + rows +
@@ -56,7 +56,7 @@ public class StationFetcher : MonoBehaviour
             station.id = records["fields"]["nummer"];
             station.name = records["fields"]["name"];
 
-			station.Position = new Vector2(records["fields"]["y_koord_ost"], records["fields"]["x_koord_nord"]);
+			station.Position = new Vector3(records["fields"]["y_koord_ost"], records["fields"]["x_koord_nord"], Mapper.Epsilon);
             theDictList[station.id] = station;
         }
         return theDictList;

@@ -35,8 +35,9 @@ public class Initialize : MonoBehaviour {
 			GameObject stationGO = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 			stationGO.transform.SetParent (Map.transform);
 			stationGO.name = station.Value.name;
-			stationGO.transform.localScale = Vector3.one * 10.0f;
-			stationGO.transform.position = new Vector3 (station.Value.Position.x, station.Value.Position.y, 0);
+			stationGO.transform.localScale = Vector3.one * 5.0f;
+			stationGO.transform.position = new Vector3 (station.Value.Position.x, station.Value.Position.y);
+			stationGO.AddComponent<Station> ().StationData = station.Value;
 		}/*/
 
 		var eligeable = _mapper.Stations.Select (i => i.Value)
@@ -62,7 +63,7 @@ public class Initialize : MonoBehaviour {
 		GameObject stationGO = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 		stationGO.transform.SetParent (Map.transform);
 		stationGO.name = station.name;
-		stationGO.transform.localScale = Vector3.one * 10.0f;
+		stationGO.transform.localScale = Vector3.one * 5.0f;
 		stationGO.transform.position = new Vector3 (station.Position.x, station.Position.y);
 		return stationGO;
 	}

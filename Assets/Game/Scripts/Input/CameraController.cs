@@ -10,9 +10,9 @@ public class CameraController : MonoBehaviour
 	public bool Interactable;
 
 	private Camera _camera;
-	private float _mouseEdgeSensitivity = 0.1f;
+	private float _mouseEdgeSensitivity = 1.0f;
 	private float _mouseScrollSensitivity = 10.0f;
-	private float _minScrollIn = -100.0f;
+	private float _minScrollIn = -50.0f;
 	private float _maxScrollOut = -1050.0f;
 
 	// Use this for initialization
@@ -34,7 +34,7 @@ public class CameraController : MonoBehaviour
 		if (Input.mousePosition.x > Screen.width - 10 && Input.mousePosition.x < Screen.width + 1) {
 			pos.x += _mouseEdgeSensitivity;
 		}
-		else if (Input.mousePosition.x < 10 && Input.mousePosition.y > -1) {
+		else if (Input.mousePosition.x < 10 && Input.mousePosition.x > -1) {
 			pos.x -= _mouseEdgeSensitivity;
 		}
 
