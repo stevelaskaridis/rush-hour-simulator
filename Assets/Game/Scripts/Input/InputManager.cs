@@ -49,6 +49,7 @@ public class InputManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		updateScore ();
 		existingRails = new Dictionary<uint, Rail> ();
 	}
 	
@@ -123,14 +124,17 @@ public class InputManager : MonoBehaviour {
 		} else {
 			var distance = (stationTo.StationData.Position - stationFrom.StationData.Position).magnitude;
 
-			const float costPerUnitDistance = 10f;
+			const float costPerUnitDistance = 3f;
 			var cost = distance * costPerUnitDistance;
+
 
 			if (Player.score < cost) {
 				ScoreText.color = Color.red;
 				return;
 			}
 			ScoreText.color = Color.green;
+
+			Debug.Log ("player has " + Player.score + " rail costed " + cost);
 			Player.score -= cost;
 			updateScore ();
 
@@ -160,7 +164,7 @@ public class InputManager : MonoBehaviour {
 			int nonServedClients = station.Value.StationData.load;
 			foreach (var connection in station.Value.connections) {
 				//nonServedClients -= 3;
-				nonServedClients -= connection.Capacity();
+				nonServedClients -= connection.Capacity()*10;
 				connection.StartSimulation();
 			}
 

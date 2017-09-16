@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-	public float score = 100;
+	public float score = 1000;
 
 	public void  UpdateCash(int served, int nonServed)
 	{
-		const float cashPerServedClient = 10;
+		const float cashPerServedClient = 20;
 		const float lossPerClient = 5;
 		float cash = cashPerServedClient * served - lossPerClient * nonServed;
 		score += cash;
