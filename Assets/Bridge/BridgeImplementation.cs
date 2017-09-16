@@ -17,7 +17,7 @@ public class BridgeImplementation : IBridge {
 	}
 
 	public void GetCitiesNamesAndCoords(Action<Dictionary<int, StationData>> callback) {
-		var go = new GameObject ();
+		var go = new GameObject ("StationFetcher");
 		var bar = go.AddComponent<StationFetcher> ();
 		bar.QueryForCities (callback);
 	}

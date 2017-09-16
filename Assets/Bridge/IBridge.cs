@@ -5,6 +5,5 @@ using System;
 
 public interface IBridge
 {
-	Vector2 To2DCoord (Vector2 input);
 	void GetCitiesNamesAndCoords(Action<Dictionary<int,StationData>> callback);
 }

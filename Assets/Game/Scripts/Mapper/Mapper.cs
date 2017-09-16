@@ -1,46 +1,49 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public class Mapper : MonoBehaviour {
+public class Mapper
+{
+	public Dictionary<int, StationData> Stations;
 
-	private IBridge bridge = new BridgeImplementation();
+	private Vector2 _baselNew = new Vector2 (-137.9f, 284f);
+	private Vector2 _genevaNew = new Vector2 (-529f, -226.8f);
 
-	public Transform BaselNew;
-	public Transform GenevaNew;
+	// TODO update these
 	private Vector2 _baselOld = new Vector2 (7.589551f, 47.54741f);
 	private Vector2 _genevaOld = new Vector2 (6.142453f, 46.2102f);
+	float _scale;
+	Vector2 _offset;
+
+	public Mapper()
+	{
+		_scale = (_genevaNew - _baselNew).magnitude / (_genevaOld - _baselOld).magnitude;
+		_offset = _genevaNew - _genevaOld;
+	}
 
 	// Use this for initialization
-	void Start ()
+	public void InitializeMap (Action StartGame)
 	{
-		bridge.GetCitiesNamesAndCoords(Callback);
+		IBridge bridge = new BridgeImplementation();
+		bridge.GetCitiesNamesAndCoords
+		((stations) => {
+			Stations = stations;
+			MapStations();
+			StartGame ();
+		});
 	}
 
-	public void Callback(Dictionary<int, StationData> stations)
+	public void MapStations()
 	{
-		Vector2 _baselReference = new Vector2 (BaselNew.transform.position.x, BaselNew.transform.position.z);
-		Vector2 _genevaNew = new Vector2 (GenevaNew.transform.position.x, GenevaNew.transform.position.z);
-
-		float scale = (_genevaNew - _baselReference).magnitude / (_genevaOld - _baselOld).magnitude;
-		Vector2 offset = _genevaNew - _genevaOld;
-
-		foreach (var station in stations)
+		foreach (var station in Stations)
 		{
-			GameObject temp = GameObject.CreatePrimitive (PrimitiveType.Sphere);
-			temp.transform.localScale = Vector3.one * 10.0f;
-
 			var genevaOldToStationOld = station.Value.Position - _genevaOld;
-			var genevaNewToStationNew = genevaOldToStationOld * scale;
+			var genevaNewToStationNew = genevaOldToStationOld * _scale;
 
 			var stationNew = _genevaNew + genevaNewToStationNew;
-			temp.transform.position = new Vector3 (stationNew.x, 0, stationNew.y);
+			station.Value.Position = new Vector3 (stationNew.x, 0, stationNew.y);
 		}
 			
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 }

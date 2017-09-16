@@ -10,10 +10,11 @@ public class StationFetcher : MonoBehaviour {
 	// Use this for initialization
 	public void QueryForCities (Action<Dictionary<int, StationData>> callback)
 	{
-		// TODO: get station names, ids and xy coordinates
-		// create list of stationData
-		// complete info with station load
+		var result = new Dictionary<int, StationData> ();
+		result.Add(0, new StationData(){ Position = new Vector2 (7.589551f, 47.54741f), name = "BaselSBB"});
+		result.Add(1, new StationData(){ Position = new Vector2 (6.142453f, 46.2102f), name = "Genève"});
 
+		callback(result);
 	}
 
 	/*IEnumerator GetStationPositionData(Action<List<StationData>> callback)
