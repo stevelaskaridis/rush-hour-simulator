@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public interface IBridge
 {
-	Dictionary<string, Vector2> GetCitiesNamesAndCoords();
+	void GetCitiesNamesAndCoords(Action<Dictionary<string, Vector2>> callback);
 }
