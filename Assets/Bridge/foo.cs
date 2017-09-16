@@ -115,11 +115,7 @@ public class foo : MonoBehaviour {
 		var theDict = new Dictionary<string, Vector2> ();
 		foreach (KeyValuePair<string, Dictionary<string, string>> dict in records) {
 			var record = dict.Value;
-			var R = 6371000;
-			var x = R * Mathf.Cos (float.Parse(record ["coord_x"])) * Mathf.Cos (float.Parse(record ["coord_y"]));
-			var y = R * Mathf.Cos (float.Parse(record ["coord_x"])) * Mathf.Sin (float.Parse(record ["coord_y"]));
-
-			theDict [record["name"]] = new Vector2 (x,y);
+			theDict [record["name"]] = new Vector2 (float.Parse(record ["coord_x"]), float.Parse(record ["coord_y"]));
 		}
 		return theDict;
 	}

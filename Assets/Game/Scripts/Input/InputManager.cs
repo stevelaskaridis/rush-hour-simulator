@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
 	private float _mouseEdgeSensitivity = 0.1f;
 	private float _mouseScrollSensitivity = 10.0f;
 	private float _minScrollIn = 100.0f;
-	private float _maxScrollOut = 650.0f;
+	private float _maxScrollOut = 1050.0f;
 
 	// Use this for initialization
 	void Start () {

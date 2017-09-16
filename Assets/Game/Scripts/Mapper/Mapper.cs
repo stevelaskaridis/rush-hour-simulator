@@ -8,22 +8,12 @@ public class Mapper : MonoBehaviour {
 
 	public Transform BaselReference;
 	public Transform GenevaReference;
-	private Vector2 _baselOld = new Vector2 (-1518007f, -5606230f); 
-	private Vector2 _genevaOld = new Vector2 (-3853121f, 545866.3f);
+	private Vector2 _baselOld = new Vector2 (7.589551f, 47.54741f);
+	private Vector2 _genevaOld = new Vector2 (6.142453f, 46.2102f);
 
 	// Use this for initialization
 	void Start ()
 	{
-		var R = 6371000;
-		var x = R * Mathf.Cos (_baselOld.x) * Mathf.Cos (_baselOld.y);
-		var y = R * Mathf.Cos (_baselOld.x) * Mathf.Sin (_baselOld.y);
-		Debug.Log(string.Format("Basel: {0}, {1}", x, y));
-
-		x = R * Mathf.Cos (_genevaOld.x) * Mathf.Cos (_genevaOld.y);
-		y = R * Mathf.Cos (_genevaOld.x) * Mathf.Sin (_genevaOld.y);
-		Debug.Log(string.Format("Basel: {0}, {1}", x, y));
-
-
 		bridge.GetCitiesNamesAndCoords(Callback);
 		Debug.Log ("query_started");
 	}
@@ -39,10 +29,15 @@ public class Mapper : MonoBehaviour {
 
 		foreach (var station in stations)
 		{
+			var stationn = station.Value;
+			//var stationn = bridge.To2DCoord (station.Value);
+			float tmp=stationn.x;
+			stationn.x=stationn.y;
+			stationn.y=tmp;
 			GameObject temp = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 			temp.transform.localScale = Vector3.one * 10.0f;
 
-			var genevaOldToStationOld = station.Value - _genevaOld;
+			var genevaOldToStationOld = stationn - _genevaOld;
 			var genevaNewToStationNew = genevaOldToStationOld * scale;
 
 			var stationNew = _genevaNew + genevaNewToStationNew;
