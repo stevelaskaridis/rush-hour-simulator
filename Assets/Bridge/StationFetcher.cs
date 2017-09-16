@@ -11,6 +11,32 @@ public class StationFetcher : MonoBehaviour
 //		QueryForCitiesPopularity (null);
 //	}
 
+	public void QueryForImageBinary(StationData theStation, Action<Texture> callback) {
+		StartCoroutine(RetrieveBinaryImage(theStation, callback));
+	}
+
+	private IEnumerator RetrieveBinaryImage(StationData theStation, Action<Texture> callback) {
+		if (theStation.imageUrl != "" && theStation.imageUrl != null) {
+			var endpoint = theStation.imageUrl;
+			UnityWebRequest www = UnityWebRequest.Get(endpoint);
+			yield return www.Send();
+
+			if (www.isNetworkError)
+			{
+				Debug.Log("logging error");
+				Debug.Log(www.error);
+			}
+			else
+			{
+				// Show results as text
+				var downloadedBinary = www.downloadHandler.data;
+				var textureToReturn = new Texture2D (theStation.imageWidth, theStation.imageHeight);
+				textureToReturn.LoadRawTextureData (downloadedBinary);
+				callback(textureToReturn);
+			}
+		}
+	}
+
 	public void QueryForStationImages(Dictionary<int, StationData> data, Action<Dictionary<int, StationData>> callback) {
 		StartCoroutine(AppendImageUrlsToStations(data, callback));
 	}
@@ -38,30 +64,37 @@ public class StationFetcher : MonoBehaviour
 		}
 		else
 		{
-			// Show results as text
 			var downloadedJson = www.downloadHandler.text;
 			var results = extractCitiesImageUrls(downloadedJson);
 			foreach (var result in results) {
 				if (data.ContainsKey(result.Key)) {
-					data[result.Key].imageUrl = result.Value;
+					data[result.Key].imageUrl = result.Value.imageUrl;
+					data[result.Key].imageWidth = result.Value.imageWidth;
+					data[result.Key].imageHeight = result.Value.imageHeight;
 				}
 			}
-			callback(data);		
+			callback(data);
 		}
 	}
 
 	/**
 	 * Extracts the urls and returns dict of the form <id, url>
 	 */
-	private Dictionary<int, string> extractCitiesImageUrls(string jsonString) {
+	private Dictionary<int, StationData> extractCitiesImageUrls(string jsonString) {
 		var parsed = JSON.Parse(jsonString);
-		var theDict = new Dictionary<int, string>();
+		var theDict = new Dictionary<int, StationData>();
 		foreach (JSONObject record in parsed["records"].AsArray)
 		{
+			var station = new StationData ();
 			var id = int.Parse(record["fields"]["nummer"]);
 			var datasetid = record ["datasetid"];
-			var url = string.Format("https://data.sbb.ch/explore/dataset/{0}/files/{1}/download", datasetid, id);
-			theDict[id] = url;
+			var imageid = record ["fields"] ["file"] ["id"];
+			var url = string.Format("https://data.sbb.ch/explore/dataset/{0}/files/{1}/download", datasetid, imageid);
+			station.id = id;
+			station.imageUrl = url;
+			station.imageWidth = record["fields"]["file"]["width"];
+			station.imageHeight = record["fields"]["file"]["heigth"];
+			theDict[id] = station;
 		}
 		return theDict;
 	}

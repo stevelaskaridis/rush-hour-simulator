@@ -9,6 +9,8 @@ public class StationData
 	public int load;
 	public Vector3 Position;
 	public string imageUrl;
+	public int imageWidth;
+	public int imageHeight;
 }
 
 public class Station : MonoBehaviour {
