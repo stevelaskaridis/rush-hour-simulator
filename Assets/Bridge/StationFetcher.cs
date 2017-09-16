@@ -14,7 +14,7 @@ public class StationFetcher : MonoBehaviour
 
     public void QueryForCities(Action<Dictionary<int, StationData>> callback)
 	{
-        StartCoroutine (GetStationPositionData (callback));
+		StartCoroutine (GetStationPositionData (callback));
     }
 
 	public void QueryForCitiesPopularity(Action<Dictionary<int, StationData>> callback) {
@@ -147,7 +147,7 @@ public class StationFetcher : MonoBehaviour
 	/**
 	 * Joins the coordinated populated data with the popularity populated data
 	 */
-	Dictionary<int, StationData> joinCitiesData(Dictionary<int, StationData> citiesWithCoords, Dictionary<int, StationData> citiesWithPopularity) {
+	public Dictionary<int, StationData> joinCitiesData(Dictionary<int, StationData> citiesWithCoords, Dictionary<int, StationData> citiesWithPopularity) {
 		var lKeys = citiesWithCoords.Keys;
 		var joinedCities = new Dictionary<int, StationData> ();
 		foreach (var key in lKeys) {

@@ -23,7 +23,7 @@ public class Station : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		StationData.load = 2;
+		
 	}
 	
 	// Update is called once per frame

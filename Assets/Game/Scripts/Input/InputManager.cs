@@ -88,7 +88,7 @@ public class InputManager : MonoBehaviour {
 
 	void updateScore()
 	{
-		ScoreText.text = "your budget: " + Player.score + "$";
+		ScoreText.text = "your budget: " + Player.score + " -CHF";
 	}
 
 	void CreateNewWagon(Rail rail)
@@ -130,7 +130,7 @@ public class InputManager : MonoBehaviour {
 				ScoreText.color = Color.red;
 				return;
 			}
-			ScoreText.color = Color.white;
+			ScoreText.color = Color.green;
 			Player.score -= cost;
 			updateScore ();
 
@@ -154,17 +154,14 @@ public class InputManager : MonoBehaviour {
 
 	public void OnSimulate()
 	{
-		daysCounter++;
-
-		if (daysCounter % 7 == 0) {
-			GetClosestStation();
-		}
 
 		foreach (var station in _stations) {
-			
+			Debug.Log (station.Value.StationData.load);
+
 			int nonServedClients = station.Value.StationData.load;
 			foreach (var connection in station.Value.connections) {
-				//load -= connection.Capacity;
+				nonServedClients -= 3;
+				//nonServedClients -= connection.Capacity;
 				//connection.StartSimulationRound()
 			}
 
@@ -177,6 +174,19 @@ public class InputManager : MonoBehaviour {
 			Player.UpdateCash (servedClients, nonServedClients);
 
 			updateScore ();
+
+			var g = servedClients/nonServedClients;
+			var r = 1f - g;
+			var color = new Color (r, g, 0, 1);
+
+			station.Value.GetComponent<Renderer> ().material.color = color;
+		}
+
+
+		daysCounter++;
+
+		if (daysCounter % 7 == 0) {
+			GetClosestStation();
 		}
 	}
 
@@ -191,6 +201,8 @@ public class InputManager : MonoBehaviour {
 		stationToAdd.StationData = station;
 
 		_stations.Add(station.id, stationToAdd);
+
+		ResizeStation (stationToAdd);
 	}
 
 	public void GetClosestStation()
@@ -204,10 +216,16 @@ public class InputManager : MonoBehaviour {
 		if (_stations.Count == 0) {
 
 			var eligeable = Mapper.Stations.Select (i => i.Value)
-				.Where (d => d.load < 10);
+				.Where (d => d.load < 1000);
+
+			if(eligeable.Count() <1)
+			{
+				Debug.Log("do increase load acceptance for starting station");
+				return;
+			}
 
 			var additionalStations = new List<StationData> ();
-			int rand = UnityEngine.Random.Range (0, eligeable.Count());
+			int rand = UnityEngine.Random.Range (0, eligeable.Count()-1);
 			InstantiateStation(eligeable.ElementAt(rand));
 			return;
 		}
@@ -232,12 +250,17 @@ public class InputManager : MonoBehaviour {
 	public void ResizeStations(float z)
 	{
 		foreach (var station in _stations) {
-			station.Value.transform.localScale = Vector3.one * _camera.GetComponent<CameraController>().GetZoomCoefficient();
-			foreach (var rail in station.Value.connections) {
-				var scale = rail.transform.localScale;
-				scale.y = transform.localScale.y;
-				rail.transform.localScale = scale;
-			}
+			ResizeStation (station.Value);
+		}
+	}
+
+	public void ResizeStation(Station station)
+	{
+		station.transform.localScale = Vector3.one * _camera.GetComponent<CameraController> ().GetZoomCoefficient ();
+		foreach (var rail in station.connections) {
+			var scale = rail.transform.localScale;
+			scale.y = transform.localScale.y;
+			rail.transform.localScale = scale;
 		}
 	}
 }

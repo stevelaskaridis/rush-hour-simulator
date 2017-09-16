@@ -14,7 +14,7 @@ public class CameraController : MonoBehaviour
 	private float _mouseEdgeSensitivity = 2.0f;
 	private float _mouseScrollSensitivity = 5.0f;
 	private float _minScrollIn = -10.0f;
-	private float _maxScrollOut = -1050.0f;
+	private float _maxScrollOut = -800.0f;
 	const float screenBorder = 30.0f;
 
 	// Use this for initialization

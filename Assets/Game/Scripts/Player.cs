@@ -8,19 +8,19 @@ public class Player : MonoBehaviour {
 
 	public void  UpdateCash(int served, int nonServed)
 	{
-
-		const float cachePerServedClient = 10;
-
-		score += cachePerServedClient * served;
+		const float cashPerServedClient = 10;
+		const float lossPerClient = 5;
+		float cash = cashPerServedClient * served - lossPerClient * nonServed;
+		score += cash;
 	}
 
 	// Use this for initialization
 	void Start () {
-		
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
 }

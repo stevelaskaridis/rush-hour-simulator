@@ -19,6 +19,31 @@ public class BridgeImplementation : IBridge {
 	public void GetCitiesNamesAndCoords(Action<Dictionary<int, StationData>> callback) {
 		var go = new GameObject ("StationFetcher");
 		var bar = go.AddComponent<StationFetcher> ();
-		bar.QueryForCities (callback);
+
+		Dictionary<int, StationData> dic1 = null;
+		Dictionary<int, StationData> dic2 = null;
+
+		int foo = 0;
+		bar.QueryForCitiesPopularity ((dic) => {
+			foo++;
+			dic1 = dic;
+			if(foo >1)
+			{
+				callback2(bar,dic1, dic2, callback);
+			}
+		});
+		bar.QueryForCities ((dic) => {
+			foo++;
+			dic2 = dic;
+			if(foo >1)
+			{
+				callback2(bar, dic1, dic2, callback);
+			}
+		});
+	}
+
+	private void callback2(StationFetcher stationFetcher ,Dictionary<int, StationData> dic1, Dictionary<int, StationData> dic2, Action<Dictionary<int, StationData>> callback)
+	{
+		callback(stationFetcher.joinCitiesData (dic2, dic1));
 	}
 }
