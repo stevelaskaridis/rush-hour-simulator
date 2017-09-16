@@ -54,30 +54,38 @@ public class InputManager : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		if(_toolState == ToolState.NONE) {
+	void Update ()
+	{
+		if (_toolState == ToolState.NONE) {
 			return;
 		}
 			
 		if (Input.GetMouseButtonDown (0)) {
 
-			RaycastHit info;
-			Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+			if (_toolState == ToolState.RAIL) {
+				RaycastHit info;
+				Ray ray = _camera.ScreenPointToRay (Input.mousePosition);
 
-			if (Physics.Raycast (ray, out info)) {
-				Debug.Log ("hit!");
-				if (_toolState == ToolState.RAIL) {
+				if (Physics.Raycast (ray, out info, 1 << LayerMask.NameToLayer("Station"))) {
+					Debug.Log ("hit!");
 					var station = info.transform.GetComponent<Station> ();
 					if (station != null) {
 
 						if (_railEndPoint == null) {
 							_railEndPoint = station;
-						} else if (_railEndPoint != station){
+						} else if (_railEndPoint != station) {
 							CreateNewRail (_railEndPoint, station);
 							_railEndPoint = null;
 						}
 					}
-				} else if (_toolState == ToolState.WAGON) {
+				}
+			} else if (_toolState == ToolState.WAGON) {
+
+				RaycastHit info;
+				Ray ray = _camera.ScreenPointToRay (Input.mousePosition);
+
+				if (Physics.Raycast (ray, out info)) {
+					Debug.Log ("hit!");
 					var rail = info.transform.GetComponent<Rail> ();
 					if (rail != null) {
 						CreateNewWagon (rail);
@@ -159,30 +167,31 @@ public class InputManager : MonoBehaviour {
 	{
 
 		foreach (var station in _stations) {
-			Debug.Log (station.Value.StationData.load);
 
 			int nonServedClients = station.Value.StationData.load;
-			foreach (var connection in station.Value.connections) {
-				//nonServedClients -= 3;
-				nonServedClients -= connection.Capacity()*10;
-				connection.StartSimulation();
+
+			if (nonServedClients > 0) {
+				foreach (var connection in station.Value.connections) {
+					//nonServedClients -= 3;
+					nonServedClients -= connection.Capacity () * 100;
+					connection.StartSimulation ();
+				}
+
+				if (nonServedClients < 0) {
+					nonServedClients = 0;
+				}
+				int servedClients = station.Value.StationData.load - nonServedClients;
+
+				Player.UpdateCash (servedClients, nonServedClients);
+
+				updateScore ();
+
+				var g = servedClients / station.Value.StationData.load;
+				var r = 1f - g;
+				var color = new Color (r, g, 0, 1);
+
+				station.Value.GetComponent<Renderer> ().material.color = color;
 			}
-
-			if (nonServedClients < 0)
-			{
-				nonServedClients = 0;
-			}
-			int servedClients = station.Value.StationData.load - nonServedClients;
-
-			Player.UpdateCash (servedClients, nonServedClients);
-
-			updateScore ();
-
-			var g = servedClients/nonServedClients;
-			var r = 1f - g;
-			var color = new Color (r, g, 0, 1);
-
-			station.Value.GetComponent<Renderer> ().material.color = color;
 		}
 
 

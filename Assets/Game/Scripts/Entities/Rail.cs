@@ -20,6 +20,7 @@ public class Rail : Track {
 		// new wagon for wagons1
 		GameObject newGO = (Instantiate(Resources.Load("TrainPrefab"))) as GameObject;
 		newGO.name = "train";
+		newGO.layer = SortingLayer.NameToID ("Train");
 		//newGO.transform.localScale = new Vector3 (wagonSize.x,wagonSize.y,1);
 		//newGO.transform.parent = transform;
 
@@ -39,7 +40,7 @@ public class Rail : Track {
 		wagons2.Add(newGO2.GetComponent<Train>());
 
 		// reset the wagon positions
-		// ResetWagonPositions ();
+		ResetWagonPositions ();
 	}
 
 	Quaternion GetProperRotationToForwardVector(Vector3 targetLocation, Vector3 startLocation){
@@ -54,12 +55,14 @@ public class Rail : Track {
 	}
 
 	public void StartSimulation(){
+		ResetWagonPositions ();
 		/// wagons1
 		// start moving the wagons to the other side of the rail
 		Vector3 positionIncrementPerWagon = (wagonStartPos2 - wagonStartPos1).normalized * (wagonSize.x);
 		// start from endpos and then subtract from it for each wagon which is later in the list
 		Vector3 endWagonPosition = wagonStartPos2 - positionIncrementPerWagon*Capacity();
 		foreach (var wagon in wagons1){
+			endWagonPosition.z = -0.5f;
 			wagon.MoveToPosition(endWagonPosition);
 			endWagonPosition = endWagonPosition + positionIncrementPerWagon;
 		}
@@ -70,6 +73,7 @@ public class Rail : Track {
 		// start from endpos and then subtract from it for each wagon which is later in the list
 		endWagonPosition = wagonStartPos1 - positionIncrementPerWagon*Capacity();
 		foreach (var wagon in wagons2){
+			endWagonPosition.z = -0.5f;
 			wagon.MoveToPosition(endWagonPosition);
 			endWagonPosition = endWagonPosition + positionIncrementPerWagon;
 		}
@@ -81,6 +85,7 @@ public class Rail : Track {
 		Vector3 currentWagonPosition = wagonStartPos1; // start from startpos and then add onto it for each wagon
 		Vector3 positionIncrementPerWagon = (wagonStartPos2 - wagonStartPos1).normalized * (wagonSize.x);
 		foreach (var wagon in wagons1){
+			currentWagonPosition.z = -0.5f;
 			wagon.TeleportToPosition (currentWagonPosition);
 			currentWagonPosition = currentWagonPosition + positionIncrementPerWagon;
 		}
@@ -89,16 +94,18 @@ public class Rail : Track {
 		currentWagonPosition = wagonStartPos2; // start from startpos and then add onto it for each wagon
 		positionIncrementPerWagon = (wagonStartPos1 - wagonStartPos2).normalized * (wagonSize.x);
 		foreach (var wagon in wagons2){
+			currentWagonPosition.z = -0.5f;
 			wagon.TeleportToPosition (currentWagonPosition);
 			currentWagonPosition = currentWagonPosition + positionIncrementPerWagon;
 		}
 	}
 
-
 	public void SetEndPoints(Station stationFrom, Station stationTo)
 	{
 		var railGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		gameObject.layer = SortingLayer.NameToID ("Rail");
 		railGO.name = "view";
+		railGO.layer = SortingLayer.NameToID ("RailView");
 		railGO.transform.SetParent (transform);
 		railGO.transform.position = (stationTo.StationData.Position + stationFrom.StationData.Position) * 0.5f;
 
@@ -117,9 +124,11 @@ public class Rail : Track {
 
 		// add collider from visualization also to the rail
 		var collider = gameObject.AddComponent<BoxCollider> ();
-		collider.center = railGO.GetComponent<BoxCollider> ().center;
-		collider.size = railGO.GetComponent<BoxCollider> ().size;
-
+		var railCol = railGO.GetComponent<BoxCollider> ();
+		var bounds = GetComponent<BoxCollider> ().bounds;
+		collider.center = Vector3.zero;
+		collider.size = railCol.bounds.size;
+		//GameObject.DestroyImmediate (railCol);
 
 		// start at two wagons offset from the station
 		Vector3 initialWagonOffsetFromStations = new Vector3(0,0,0);//(_stationFrom.StationData.Position - _stationTo.StationData.Position).normalized * wagonSize.x * 2;
@@ -135,6 +144,6 @@ public class Rail : Track {
 	
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
 }

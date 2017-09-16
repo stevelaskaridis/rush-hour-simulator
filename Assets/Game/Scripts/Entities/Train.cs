@@ -22,8 +22,9 @@ public class Train : TransportationVehicle {
 	void Update () {
 		if (isMoving) {
 			transform.position = Vector3.Lerp (startPoint, endPoint, (Time.time - startTime) / duration);
-			if ((transform.position - endPoint).sqrMagnitude < movementStopEpsilon) {
+			if ((transform.position - endPoint).sqrMagnitude < movementStopEpsilon || (Time.time - startTime) / duration > 1) {
 				isMoving = false;
+				transform.position = startPoint;
 			}
 		}
 	}

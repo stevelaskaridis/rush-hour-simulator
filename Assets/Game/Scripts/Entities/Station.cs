@@ -23,7 +23,7 @@ public class Station : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		gameObject.layer=LayerMask.NameToLayer("Station");
 	}
 	
 	// Update is called once per frame
