@@ -11,14 +11,26 @@ public class InputManager : MonoBehaviour {
 		WAGON
 	}
 
-	public void OnSelectRailTool()
-	{
+	private ToolState _toolState;
 
+	private Station _railEndPoint;
+
+	private void CancleTool()
+	{
+		_railEndPoint = null;
+	}
+
+	public void OnSelectRailTool(bool enabled)
+	{
+		_toolState = ToolState.NONE;
+		if (enabled) {
+			_toolState = ToolState.RAIL;
+		}
 	}
 
 	public void OnSelectWagonTool()
 	{
-
+		_toolState = ToolState.WAGON;
 	}
 
 	// Use this for initialization

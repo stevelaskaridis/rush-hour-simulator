@@ -7,7 +7,7 @@ public class Mapper
 {
 	public Dictionary<int, StationData> Stations;
 
-	private Vector2 _baselNew = new Vector2 (-139.3f, 283.1f);
+	private Vector2 _baselNew = new Vector2 (-130.3f, 275.1f);
 	private Vector2 _genevaNew = new Vector2 (-529f, -226.8f);
 
 	// TODO update these
