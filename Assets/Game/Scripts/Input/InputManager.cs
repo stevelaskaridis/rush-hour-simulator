@@ -14,6 +14,7 @@ public class InputManager : MonoBehaviour {
 	public Mapper Mapper;
 	public Player Player;
 	public Text ScoreText;
+	public GameObject LoseScreen;
 
 	private enum ToolState
 	{
@@ -183,6 +184,11 @@ public class InputManager : MonoBehaviour {
 				int servedClients = station.Value.StationData.load - nonServedClients;
 
 				Player.UpdateCash (servedClients, nonServedClients);
+
+				if (Player.score < 0) {
+					LoseScreen.gameObject.SetActive (true);
+					LoseScreen.AddComponent<Losing> ();
+				}
 
 				updateScore ();
 
