@@ -19,13 +19,15 @@ public class StationFetcher : MonoBehaviour
 
     IEnumerator GetStationPositionData(Action<Dictionary<int, StationData>> callback)
     {
+        string apikey = "e2e01b388967105bd0911fc98c1d8a5cf133c853e645a4a7f5b0f761";
+        string rows = "rows=" + 10000;
         string endpoint =
             string.Format(
-                "https://data.sbb.ch/api/records/1.0/search/?dataset=didok-liste&rows=1000&facet=nummer&facet=abkuerzung&facet=tunummer&facet=tuabkuerzung&facet=betriebspunkttyp&facet=verkehrsmittel&facet=dst_abk&facet=didok");
+                "https://data.sbb.ch/api/records/1.0/search/?" + "apikey="+apikey + "&" + rows +
+                "&dataset=didok-liste&q=zug&lang=en&facet=nummer&facet=abkuerzung&facet=tunummer&facet=tuabkuerzung&facet=betriebspunkttyp&facet=verkehrsmittel&facet=dst_abk&facet=didok&exclude.verkehrsmittel=Bus&exclude.verkehrsmittel=Luftseilbahn&exclude.verkehrsmittel=Schiff&exclude.verkehrsmittel=Tram&exclude.verkehrsmittel=Standseilbahn&exclude.verkehrsmittel=Zahnradbahn&exclude.verkehrsmittel=Metro&exclude.verkehrsmittel=Standseilbahn_Luftseilbahn&exclude.verkehrsmittel=Standseilbahn_Bus");
 
         UnityWebRequest www = UnityWebRequest.Get(endpoint);
         yield return www.Send();
-
 
         if (www.isNetworkError)
         {
@@ -39,7 +41,7 @@ public class StationFetcher : MonoBehaviour
 //			Debug.Log(getCitiesNamesAndCoords(getFieldsFromJsonString(downloadedJson)).Count);
             var results = myFoobar(downloadedJson);
             callback(results);
-            //StartCoroutine(GetStationLoadData(10000, 0, "asc", "dtv", results, callback));
+            //StartCoroutine(GetStationLoadData(10000, 0, "asc", "dtv", results, apiKey, callback));
 
         }
     }
@@ -61,7 +63,7 @@ public class StationFetcher : MonoBehaviour
     }
 
     IEnumerator GetStationLoadData(int rowLimit, int startOffset, string sortOrder,
-        Dictionary<int, StationData> stationData, string sortingField,
+		Dictionary<int, StationData> stationData, string sortingField, string apiKey,
         Action<Dictionary<int, StationData>> callback)
     {
         string sortingPrefix = "";
@@ -78,11 +80,12 @@ public class StationFetcher : MonoBehaviour
         }
 
         string endpoint = string.Format(
-            "https://data.sbb.ch/api/records/1.0/search/?dataset=passenger-frequence&rows={0}&start={1}&sort={2}{3}&facet=code&facet=bezugsjahr&facet=dtv&facet=dwv",
+			"https://data.sbb.ch/api/records/1.0/search/?dataset=passenger-frequence&apikey={4}&rows={0}&start={1}&sort={2}{3}&facet=code&facet=bezugsjahr&facet=dtv&facet=dwv",
             rowLimit.ToString(),
             startOffset.ToString(),
             sortingPrefix,
-            sortingField
+            sortingField,
+			apiKey
         );
         UnityWebRequest www = UnityWebRequest.Get(endpoint);
         yield return www.Send();
