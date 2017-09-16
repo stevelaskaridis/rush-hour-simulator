@@ -55,15 +55,9 @@ public class StationFetcher : MonoBehaviour
             station.id = records["fields"]["nummer"];
             station.name = records["fields"]["name"];
 
-            if (station.name.ToLower().Contains("gen"))
-            {
-                Debug.LogError("basel" + station.name);
-            }
-
             station.Position = new Vector2(records["x_koord_nord"], records["y_koord_ost"]);
             theDictList[station.id] = station;
         }
-        Debug.LogError("items " + theDictList.Count);
         return theDictList;
     }
 
