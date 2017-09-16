@@ -1,16 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Losing : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+
+	void Start()
+	{
+		stopAll();
 		
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+	public void stopAll()
+	{
+		GameObject go = GameObject.Find("VerticalLayout");
+		go.SetActive(false);
+		
+		go = GameObject.Find("Main Camera");
+		go.GetComponent<CameraController>().Interactable = false;
 		
 	}
+
 }

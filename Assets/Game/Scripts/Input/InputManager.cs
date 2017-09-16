@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class InputManager : MonoBehaviour {
 
@@ -185,11 +186,6 @@ public class InputManager : MonoBehaviour {
 
 				Player.UpdateCash (servedClients, nonServedClients);
 
-				if (Player.score < 0) {
-					LoseScreen.gameObject.SetActive (true);
-					LoseScreen.AddComponent<Losing> ();
-				}
-
 				updateScore ();
 
 				var g = servedClients / station.Value.StationData.load;
@@ -198,6 +194,12 @@ public class InputManager : MonoBehaviour {
 
 				station.Value.GetComponent<Renderer> ().material.color = color;
 			}
+		}
+
+		if (Player.score < 0)
+		{
+			LoseScreen.gameObject.SetActive(true);
+			LoseScreen.AddComponent<Losing>();
 		}
 
 		daysCounter++;
@@ -277,5 +279,10 @@ public class InputManager : MonoBehaviour {
 			scale.y = transform.localScale.y;
 			rail.transform.localScale = scale;
 		}
+	}
+	
+	public void reloadScene()
+	{
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 }
