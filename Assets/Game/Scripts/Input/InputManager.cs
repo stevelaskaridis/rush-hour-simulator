@@ -134,8 +134,7 @@ public class InputManager : MonoBehaviour {
 			Player.score -= cost;
 			updateScore ();
 
-			var railGO = GameObject.CreatePrimitive (PrimitiveType.Cube);
-			railGO.name = "rail_" + stationFrom.name + "-" + stationTo.name;
+			var railGO = new GameObject("rail_" + stationFrom.name + "-" + stationTo.name);
 			railGO.transform.position = (stationTo.StationData.Position + stationFrom.StationData.Position) * 0.5f;
 			var rail = railGO.AddComponent<Rail> ();
 			rail.SetEndPoints (stationFrom, stationTo);
