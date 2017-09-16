@@ -174,7 +174,7 @@ public class InputManager : MonoBehaviour {
 			if (nonServedClients > 0) {
 				foreach (var connection in station.Value.connections) {
 					//nonServedClients -= 3;
-					nonServedClients -= connection.Capacity () * 100;
+					nonServedClients -= connection.Capacity () * 200;
 					connection.StartSimulation ();
 				}
 
@@ -200,12 +200,9 @@ public class InputManager : MonoBehaviour {
 			}
 		}
 
-
 		daysCounter++;
 
-		if (daysCounter % 7 == 0) {
-			GetClosestStation();
-		}
+		GetClosestStation();
 	}
 
 	void InstantiateStation(StationData station)
