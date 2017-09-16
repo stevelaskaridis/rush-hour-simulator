@@ -7,10 +7,64 @@ using System;
 
 public class StationFetcher : MonoBehaviour
 {
-
 //	public void Start() {
 //		QueryForCitiesPopularity (null);
 //	}
+
+	public void QueryForStationImages(Dictionary<int, StationData> data, Action<Dictionary<int, StationData>> callback) {
+		StartCoroutine(AppendImageUrlsToStations(data, callback));
+	}
+
+	/**
+	 * Appends the image url information to the station data passed.
+	 */
+	private IEnumerator AppendImageUrlsToStations(Dictionary<int, StationData> data, Action<Dictionary<int, StationData>> callback) {
+		string apikey = "e2e01b388967105bd0911fc98c1d8a5cf133c853e645a4a7f5b0f761";
+		string rows = "10000";
+		string offset = "0";
+		string sortkey = "nummer";
+//		https://data.sbb.ch/api/records/1.0/search/?dataset=bilder-von-bahnhofen&rows=10000&start=0&sort=nummer
+		string endpoint =
+			string.Format(
+				"https://data.sbb.ch/api/records/1.0/search/?apikey={0}&dataset=bilder-von-bahnhofen&rows={1}&start={2}&sort={3}", apikey, rows, offset, sortkey);
+	
+		UnityWebRequest www = UnityWebRequest.Get(endpoint);
+		yield return www.Send();
+
+		if (www.isNetworkError)
+		{
+			Debug.Log("logging error");
+			Debug.Log(www.error);
+		}
+		else
+		{
+			// Show results as text
+			var downloadedJson = www.downloadHandler.text;
+			var results = extractCitiesImageUrls(downloadedJson);
+			foreach (var result in results) {
+				if (data.ContainsKey(result.Key)) {
+					data[result.Key].imageUrl = result.Value;
+				}
+			}
+			callback(data);		
+		}
+	}
+
+	/**
+	 * Extracts the urls and returns dict of the form <id, url>
+	 */
+	private Dictionary<int, string> extractCitiesImageUrls(string jsonString) {
+		var parsed = JSON.Parse(jsonString);
+		var theDict = new Dictionary<int, string>();
+		foreach (JSONObject record in parsed["records"].AsArray)
+		{
+			var id = int.Parse(record["fields"]["nummer"]);
+			var datasetid = record ["datasetid"];
+			var url = string.Format("https://data.sbb.ch/explore/dataset/{0}/files/{1}/download", datasetid, id);
+			theDict[id] = url;
+		}
+		return theDict;
+	}
 
     public void QueryForCities(Action<Dictionary<int, StationData>> callback)
 	{
