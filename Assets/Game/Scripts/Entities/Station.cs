@@ -12,11 +12,19 @@ public class StationData
 
 public class Station : MonoBehaviour {
 
+
+	public void DisplayCashAnimation(int served, int nonServed)
+	{
+		//  spawn a particle-like thing
+	}
+
 	public StationData StationData;
+	public List<Rail> connections;
 
 	// Use this for initialization
 	void Start () {
-		
+		StationData.load = 2;
+		connections = new List<Rail> ();
 	}
 	
 	// Update is called once per frame

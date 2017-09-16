@@ -5,9 +5,17 @@ using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour {
 
+	private List<Station> _stations;
 	public Camera _camera;
 	public Button RailTool;
 	public Button WagonTool;
+	public Mapper Mapper;
+	public Player Player;
+
+	public void AddStation(Station station)
+	{
+		_stations.Add(station);
+	}
 
 	private enum ToolState
 	{
@@ -112,6 +120,31 @@ public class InputManager : MonoBehaviour {
 			stationTo.GetComponent<Renderer> ().material.color = Color.green;
 
 			existingRails.Add (connection, rail);
+
+			stationFrom.connections.Add (rail);
+			stationTo.connections.Add (rail);
+		}
+	}
+
+	public void OnSimulate()
+	{
+		foreach (var station in _stations) {
+			
+			int nonServedClients = station.StationData.load;
+			foreach (var connection in station.connections) {
+				//load -= connection.capacity;
+				//connection.StartSimulationRound()
+			}
+
+			if (nonServedClients < 0)
+			{
+				nonServedClients = 0;
+			}
+			int servedClients = station.StationData.load - nonServedClients;
+
+			Player.UpdateCash (servedClients, nonServedClients);
+
+
 		}
 	}
 }

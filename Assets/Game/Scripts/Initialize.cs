@@ -8,6 +8,7 @@ public class Initialize : MonoBehaviour {
 	public GameObject Map;
 	public GameObject LoadingPage;
 	public CameraController CameraController;
+	public InputManager InputManager;
 
 	private Mapper _mapper;
 
@@ -37,8 +38,14 @@ public class Initialize : MonoBehaviour {
 			stationGO.name = station.Value.name;
 			stationGO.transform.localScale = Vector3.one * 5.0f;
 			stationGO.transform.position = new Vector3 (station.Value.Position.x, station.Value.Position.y);
-			stationGO.AddComponent<Station> ().StationData = station.Value;
-		}/*/
+			var stationToAdd = stationGO.AddComponent<Station> ();
+			stationToAdd.StationData = station.Value;
+
+			InputManager.AddStation(stationToAdd);
+		}
+		InputManager.Mapper = _mapper;
+		/*/
+
 
 		var eligeable = _mapper.Stations.Select (i => i.Value)
 			.Where (d => d.load < 10);

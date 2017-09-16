@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+	public void  UpdateCash(int served, int nonServed)
+	{
+		
+	}
+
 	// Use this for initialization
 	void Start () {
 		
