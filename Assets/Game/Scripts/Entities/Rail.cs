@@ -140,13 +140,21 @@ public class Rail : Track {
 		material= new Material(Shader.Find("Unlit/Color"));
 		material.color = Color.black;
 
+		/*
 		// add collider from visualization also to the rail
 		var collider = gameObject.AddComponent<BoxCollider> ();
 		var railCol = railGO.GetComponent<BoxCollider> ();
-		var bounds = GetComponent<BoxCollider> ().bounds;
-		collider.center = Vector3.zero;
-		collider.size = railCol.bounds.size;
+
+		//var bounds = GetComponent<BoxCollider> ().bounds;
+		//collider.center = Vector3.zero;
+		//collider.size = railCol.bounds.size;
+		
+
+		collider.transform.SetPositionAndRotation(railCol.transform.position, railCol.transform.rotation);
+		collider.transform.localScale = railCol.transform.localScale;
+		railCol.transform.position += new Vector3 (0, 0, 200);
 		//GameObject.DestroyImmediate (railCol);
+		//*/
 
 		// start at two wagons offset from the station
 		Vector3 initialWagonOffsetFromStations = new Vector3(0,0,0);//(_stationFrom.StationData.Position - _stationTo.StationData.Position).normalized * wagonSize.x * 2;

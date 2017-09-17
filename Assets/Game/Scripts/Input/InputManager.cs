@@ -15,6 +15,7 @@ public class InputManager : MonoBehaviour {
 	public Mapper Mapper;
 	public Player Player;
 	public Text ScoreText;
+	public Text UserInformationText;
 	public GameObject LoseScreen;
 
 	private enum ToolState
@@ -90,7 +91,13 @@ public class InputManager : MonoBehaviour {
 					Debug.Log ("hit!");
 					var rail = info.transform.GetComponent<Rail> ();
 					if (rail != null) {
-						CreateNewWagon (rail);
+						CreateNewWagon (rail); // this is actually unused right now, the rail does NOT have a collider anymore because it just wouldn't work..
+					} else {
+						// instead we use the box collider on its child, the visualization of the road to get to the rail if possible (the boxes (rail visualization)'s parent)
+						rail = info.transform.parent.GetComponent<Rail> ();
+						if (rail != null) {
+							CreateNewWagon (rail);	
+						}
 					}
 				}
 			}
@@ -99,8 +106,7 @@ public class InputManager : MonoBehaviour {
 
 	void updateScore()
 	{
-		ScoreText.text = "Your Budget: " + Player.score + " -CHF";
-		ScoreText.fontSize = 20;
+		ScoreText.text = "Your Budget: " + (int)Player.score + ".- CHF";
 	}
 
 	void CreateNewWagon(Rail rail)
@@ -109,11 +115,13 @@ public class InputManager : MonoBehaviour {
 
 		if (Player.score < wagonCost) { // check if enough money
 			ScoreText.color = Color.red;
+			UserInformationText.text = "You do not have enough money to place a train wagon.";
 			return;
 		}
 
 		if (rail.CurrentNumberOfWagons() >= rail.MaxNrOfWagons()) { // also check if rail still has room for more trains
-			Debug.Log("Too many wagons already on this track, I'm not gonna put any more");
+			// Debug.Log("Too many wagons already on this track, I'm not gonna put any more");
+			UserInformationText.text = "Reached the maximum number of wagons on this track.";
 			// have some player information here that its not possible
 			return;
 		}
@@ -121,6 +129,7 @@ public class InputManager : MonoBehaviour {
 		Player.score -= wagonCost;
 		updateScore();
 
+		UserInformationText.text = "You placed a train wagon. This costed you " + (int)wagonCost + ".- CHF.";
 		rail.AddWagon();
 	}
 
@@ -148,11 +157,13 @@ public class InputManager : MonoBehaviour {
 
 			if (Player.score < cost) {
 				ScoreText.color = Color.red;
+				UserInformationText.text = "You can't build this track, you're " + (int)(cost - Player.score) + ".- CHF short on money.";
 				return;
 			}
 			ScoreText.color = Color.green;
 
 			Debug.Log ("player has " + Player.score + " rail costed " + cost);
+			UserInformationText.text = "This track from " + stationFrom.name + " to " + stationTo.name + " costed you " + (int)cost + ".- CHF.";
 			Player.score -= cost;
 			updateScore ();
 
