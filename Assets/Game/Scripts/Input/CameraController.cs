@@ -54,6 +54,10 @@ public class CameraController : MonoBehaviour
 		pos.z += _mouseScrollSensitivity * Input.mouseScrollDelta.y * GetZoomCoefficient();
 
 		// todo: restrict x and z
+		pos.x = Mathf.Max (pos.x, -0.5f * Screen.width);
+		pos.x = Mathf.Min (pos.x, 0.5f * Screen.width);
+		pos.y = Mathf.Max (pos.y, -0.5f * Screen.height);
+		pos.y = Mathf.Min (pos.y, 0.5f * Screen.height);
 		pos.z = Mathf.Max (pos.z, _maxScrollOut);
 		pos.z = Mathf.Min (pos.z, _minScrollIn);
 
