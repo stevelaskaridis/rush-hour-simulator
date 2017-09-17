@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-	public float score = 1000;
+	public float score;
 
 	public void  UpdateCash(int served, int nonServed)
 	{
