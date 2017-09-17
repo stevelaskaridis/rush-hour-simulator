@@ -114,6 +114,7 @@ public class InputManager : MonoBehaviour {
 					//Mapper.Bridge.GetCityImageTexture (Mapper.Stations, station.StationData, (texture) => {
 					//	StationImage.texture = texture;
 					//});
+					StationName.text = station.StationData.name;
 				}
 			} else {
 				Debug.Log ("foo");
