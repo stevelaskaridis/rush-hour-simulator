@@ -16,6 +16,7 @@ public class InputManager : MonoBehaviour {
 	public Player Player;
 	public Text ScoreText;
 	public GameObject LoseScreen;
+	public RawImage StationImage;
 
 	private enum ToolState
 	{
@@ -58,10 +59,6 @@ public class InputManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
-		if (_toolState == ToolState.NONE) {
-			return;
-		}
-			
 		if (Input.GetMouseButtonDown (0)) {
 
 			if (_toolState == ToolState.RAIL) {
@@ -95,7 +92,29 @@ public class InputManager : MonoBehaviour {
 				}
 			}
 		}
+
+		// get station imageRaycastHit info;
+		RaycastHit info1;
+		Ray ray1 = _camera.ScreenPointToRay (Input.mousePosition);
+
+		if (Physics.Raycast (ray1, out info1, 1 << LayerMask.NameToLayer("Station"))) {
+			Debug.Log ("hit!");
+			var station = info1.transform.GetComponent<Station> ();
+			if (station != null) {
+				if (previouslyRendered == null || station.StationData.id != previouslyRendered.id) {
+					Mapper.Bridge.GetCityImageTexture (Mapper.Stations, station.StationData, (texture) => {
+						StationImage.texture = texture;
+					});
+				}
+			} else {
+				Debug.Log ("foo");
+				StationImage.texture = null;
+				previouslyRendered = null;
+			}
+		}
 	}
+
+	StationData previouslyRendered;
 
 	void updateScore()
 	{
@@ -241,7 +260,7 @@ public class InputManager : MonoBehaviour {
 		if (_stations.Count == 0) {
 
 			var eligeable = Mapper.Stations.Select (i => i.Value)
-				.Where (d => d.load < 1000);
+				.Where (d => d.load < 100000000);
 
 			if(eligeable.Count() <1)
 			{

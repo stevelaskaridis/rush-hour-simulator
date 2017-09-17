@@ -11,14 +11,15 @@ public class StationFetcher : MonoBehaviour
 //		QueryForCitiesPopularity (null);
 //	}
 
-	public void QueryForImageBinary(StationData theStation, Action<Texture> callback) {
+	public void QueryForImageBinary(StationData theStation, Action<Texture2D> callback) {
 		StartCoroutine(RetrieveBinaryImage(theStation, callback));
 	}
 
-	private IEnumerator RetrieveBinaryImage(StationData theStation, Action<Texture> callback) {
+	private IEnumerator RetrieveBinaryImage(StationData theStation, Action<Texture2D> callback) {
+
 		if (theStation.imageUrl != "" && theStation.imageUrl != null) {
 			var endpoint = theStation.imageUrl;
-			UnityWebRequest www = UnityWebRequest.Get(endpoint);
+			UnityWebRequest www = UnityWebRequestTexture.GetTexture(endpoint);
 			yield return www.Send();
 
 			if (www.isNetworkError)
@@ -29,10 +30,8 @@ public class StationFetcher : MonoBehaviour
 			else
 			{
 				// Show results as text
-				var downloadedBinary = www.downloadHandler.data;
-				var textureToReturn = new Texture2D (theStation.imageWidth, theStation.imageHeight);
-				textureToReturn.LoadRawTextureData (downloadedBinary);
-				callback(textureToReturn);
+				var downloadedBinary = ((DownloadHandlerTexture)www.downloadHandler).texture;
+				callback(downloadedBinary);
 			}
 		}
 	}
@@ -64,6 +63,9 @@ public class StationFetcher : MonoBehaviour
 		}
 		else
 		{
+
+			var returnDic = new Dictionary<int, StationData>();
+
 			var downloadedJson = www.downloadHandler.text;
 			var results = extractCitiesImageUrls(downloadedJson);
 			foreach (var result in results) {
@@ -71,9 +73,12 @@ public class StationFetcher : MonoBehaviour
 					data[result.Key].imageUrl = result.Value.imageUrl;
 					data[result.Key].imageWidth = result.Value.imageWidth;
 					data[result.Key].imageHeight = result.Value.imageHeight;
+
+					returnDic.Add(result.Key, data[result.Key]);
+					Debug.Log("url: " + data[result.Key].imageUrl);
 				}
 			}
-			callback(data);
+			callback(returnDic);
 		}
 	}
 
@@ -88,8 +93,10 @@ public class StationFetcher : MonoBehaviour
 			var station = new StationData ();
 			var id = int.Parse(record["fields"]["nummer"]);
 			var datasetid = record ["datasetid"];
+			var datasetid1 = datasetid.Value.TrimStart ().TrimEnd ();
 			var imageid = record ["fields"] ["file"] ["id"];
-			var url = string.Format("https://data.sbb.ch/explore/dataset/{0}/files/{1}/download", datasetid, imageid);
+			var imageid1 = imageid.Value.TrimStart ().TrimEnd ();
+			var url = string.Format("https://data.sbb.ch/explore/dataset/{0}/files/{1}/download", datasetid1, imageid1);
 			station.id = id;
 			station.imageUrl = url;
 			station.imageWidth = record["fields"]["file"]["width"];
