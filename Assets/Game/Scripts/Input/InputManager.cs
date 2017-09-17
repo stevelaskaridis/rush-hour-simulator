@@ -152,7 +152,7 @@ public class InputManager : MonoBehaviour {
 		Player.score -= wagonCost;
 		updateScore();
 
-		UserInformationText.text = "You placed a train wagon. This costed you " + (int)wagonCost + ".- CHF.";
+		UserInformationText.text = "You placed a train wagon. This cost you " + (int)wagonCost + ".- CHF.";
 		rail.AddWagon();
 	}
 
@@ -185,8 +185,8 @@ public class InputManager : MonoBehaviour {
 			}
 			ScoreText.color = Color.green;
 
-			Debug.Log ("player has " + Player.score + " rail costed " + cost);
-			UserInformationText.text = "This track from " + stationFrom.name + " to " + stationTo.name + " costed you " + (int)cost + ".- CHF.";
+			Debug.Log ("player has " + Player.score + " rail cost " + cost);
+			UserInformationText.text = "This track from " + stationFrom.name + " to " + stationTo.name + " cost you " + (int)cost + ".- CHF.";
 			Player.score -= cost;
 			updateScore ();
 
