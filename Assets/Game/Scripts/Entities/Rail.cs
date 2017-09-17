@@ -7,6 +7,8 @@ public class Rail : Track {
 	Station _stationFrom;
 	Station _stationTo;
 
+	string wagonType; // bus or train prefab
+
 	List<Train> wagons1;
 	List<Train> wagons2;
 	// Vector2 wagonSize = new Vector2(1f,1f); // should have ratio 1:1 (x:y)
@@ -23,7 +25,7 @@ public class Rail : Track {
 	public void AddWagon()
 	{	
 		// new wagon for wagons1
-		GameObject newGO = (Instantiate(Resources.Load("TrainPrefab"))) as GameObject;
+		GameObject newGO = (Instantiate(Resources.Load(wagonType))) as GameObject;
 		newGO.name = "train";
 		newGO.layer = SortingLayer.NameToID ("Train");
 		//newGO.transform.localScale = new Vector3 (wagonSize.x,wagonSize.y,1);
@@ -37,7 +39,7 @@ public class Rail : Track {
 		wagons1.Add(newGO.GetComponent<Train>());
 
 		// new wagon for wagons2
-		GameObject newGO2 = (Instantiate(Resources.Load("TrainPrefab"))) as GameObject;
+		GameObject newGO2 = (Instantiate(Resources.Load(wagonType))) as GameObject;
 		newGO2.name = "train";
 		//newGO2.transform.parent = transform;
 		//newGO2.transform.localScale = new Vector3 (wagonSize.x,wagonSize.y,1);
@@ -101,6 +103,7 @@ public class Rail : Track {
 		// reset all wagons to initial positions
 		/// wagons1
 		Vector3 currentWagonPosition = wagonStartPos1; // start from startpos and then add onto it for each wagon
+		//if (wagons1.Count > 0) currentWagonPosition += wagons1[0].transform.forward*50; // go a bit to the right
 		Vector3 positionIncrementPerWagon = (wagonStartPos2 - wagonStartPos1).normalized * (wagonXDimension*wagonScale);
 		foreach (var wagon in wagons1){
 			currentWagonPosition.z = -0.5f;
@@ -110,6 +113,7 @@ public class Rail : Track {
 
 		/// wagons2
 		currentWagonPosition = wagonStartPos2; // start from startpos and then add onto it for each wagon
+		//if (wagons2.Count > 0) currentWagonPosition += wagons2[0].transform.forward*50; // go a bit to the right
 		positionIncrementPerWagon = (wagonStartPos1 - wagonStartPos2).normalized * (wagonXDimension*wagonScale);
 		foreach (var wagon in wagons2){
 			currentWagonPosition.z = -0.5f;
@@ -166,6 +170,11 @@ public class Rail : Track {
 	void Start () {
 		wagons1 = new List<Train> ();
 		wagons2 = new List<Train> ();
+		// randomly select prefab to be used
+		wagonType = "TrainPrefab";
+		if (Random.Range (0.0f, 1.0f) > 0.6f) {
+			wagonType = "BusPrefab";
+		}
 	}
 	
 	// Update is called once per frame
