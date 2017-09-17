@@ -8,6 +8,10 @@ public class Initialize : MonoBehaviour {
 	public GameObject LoadingPage;
 	public CameraController CameraController;
 	public InputManager InputManager;
+	public Text LoadingScreenMessage;
+	int loadingScreenMessageState = 0;
+	float timeBeforeMessageChange = 0.35f;
+	float lastUpdateTime;
 
 	private Mapper _mapper;
 
@@ -18,6 +22,8 @@ public class Initialize : MonoBehaviour {
 
 		_mapper = new Mapper ();
 		_mapper.InitializeMap (StartGame);
+
+		lastUpdateTime = Time.time;
 	}
 
 	void StartGame()
@@ -51,11 +57,21 @@ public class Initialize : MonoBehaviour {
 		for (int i = 0; i < numberOfAddStations; i++) {
 			InputManager.GetClosestStation ();
 		}
+			
 		//*/
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if ((Time.time - lastUpdateTime) > timeBeforeMessageChange) {
+			loadingScreenMessageState += 1;
+			lastUpdateTime = Time.time;
+			if (loadingScreenMessageState > 3) {
+				loadingScreenMessageState = 0;
+				LoadingScreenMessage.text = "Loading";
+			}else{
+				LoadingScreenMessage.text = LoadingScreenMessage.text + ".";
+			}
+		}
 	}
 }

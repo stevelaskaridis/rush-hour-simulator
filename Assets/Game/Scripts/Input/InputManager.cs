@@ -18,6 +18,7 @@ public class InputManager : MonoBehaviour {
 	public Text UserInformationText;
 	public GameObject LoseScreen;
 	public RawImage StationImage;
+	public Text StationName;
 
 	private enum ToolState
 	{
