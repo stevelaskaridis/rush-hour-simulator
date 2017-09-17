@@ -12,6 +12,7 @@ public class Losing : MonoBehaviour {
 
 	public void stopAll()
 	{
+		return;
 		GameObject.Find("PlaceWagonButton").SetActive(false);
 		GameObject.Find("RunSimulation").SetActive(false);
 		GameObject.Find("PlaceRailRoadButton").SetActive(false);

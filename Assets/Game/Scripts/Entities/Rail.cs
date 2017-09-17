@@ -172,4 +172,16 @@ public class Rail : Track {
 	void Update () {
 
 	}
+
+
+
+	public void DestroyWagons()
+	{
+		foreach (var wagon in wagons1) {
+			GameObject.DestroyImmediate (wagon.gameObject);
+		}
+		foreach (var wagon in wagons2) {
+			GameObject.DestroyImmediate (wagon.gameObject);
+		}
+	}
 }

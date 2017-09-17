@@ -12,6 +12,7 @@ public class InputManager : MonoBehaviour {
 	public Camera _camera;
 	public Button RailTool;
 	public Button WagonTool;
+	public Button GoButton;
 	public Mapper Mapper;
 	public Player Player;
 	public Text ScoreText;
@@ -240,7 +241,8 @@ public class InputManager : MonoBehaviour {
 		if (Player.score < 0)
 		{
 			LoseScreen.gameObject.SetActive(true);
-			LoseScreen.AddComponent<Losing>();
+			LoseScreen.GetComponent<Losing>().stopAll();
+			return;
 		}
 
 		daysCounter++;
@@ -324,6 +326,44 @@ public class InputManager : MonoBehaviour {
 	
 	public void reloadScene()
 	{
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		Player.score = 1000;
+		updateScore ();
+
+		RailTool.enabled = true;
+		WagonTool.enabled = true;
+		GoButton.enabled = true;
+		LoseScreen.SetActive (false);
+		UserInformationText.text = "";
+		StationName.text = "";
+
+		if (_stations != null) {
+
+			var toDestroy = new List<Rail> ();
+			foreach (var station in _stations) {
+				Debug.Log ("destroying station " + station.Value.StationData.name);
+				foreach (var connection in station.Value.connections)
+				{
+					if(!toDestroy.Contains(connection)){
+						toDestroy.Add (connection);
+					}
+				}
+				GameObject.DestroyImmediate (station.Value.gameObject);
+			}
+			foreach (var rail in toDestroy)
+			{
+				rail.DestroyWagons ();
+				GameObject.DestroyImmediate (rail.gameObject);
+			}
+			_stations.Clear ();
+		}
+
+		existingRails.Clear ();
+
+		int numberOfAddStations = 4;
+		for (int i = 0; i < numberOfAddStations; i++) {
+			GetClosestStation ();
+		}
+		//SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
 	}
 }
