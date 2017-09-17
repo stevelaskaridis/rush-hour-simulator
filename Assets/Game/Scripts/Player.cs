@@ -8,7 +8,7 @@ public class Player : MonoBehaviour {
 
 	public void  UpdateCash(int served, int nonServed)
 	{
-		const float cashPerServedClient = 20;
+		const float cashPerServedClient = 30;
 		const float lossPerClient = 1;
 		float cash = cashPerServedClient * served - lossPerClient * nonServed;
 		score += cash;

@@ -53,6 +53,14 @@ public class BridgeImplementation : IBridge {
 	private void callback2(Dictionary<int, StationData> dic1, Dictionary<int, StationData> dic2, Action<Dictionary<int, StationData>> callback)
 	{
 		var result = _stationFetcher.joinCitiesData (dic2, dic1);
-		_stationFetcher.QueryForStationImages (result, (res) => callback(res));
+		_stationFetcher.QueryForStationImages (result, (res) =>
+			{
+				foreach (var r in res)
+				{
+					GetCityImageTexture(res, r.Value, (t) => r.Value.texture =t);
+				}
+
+				callback(res);
+			});
 	}
 }

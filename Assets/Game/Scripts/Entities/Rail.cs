@@ -18,7 +18,7 @@ public class Rail : Track {
 	Vector3 wagonStartPos1;
 	Vector3 wagonStartPos2;
 
-	public int capacityPerWagon = 200;
+	public int capacityPerWagon = 1000;
 
 	public void AddWagon()
 	{	
