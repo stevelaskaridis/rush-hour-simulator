@@ -111,17 +111,16 @@ public class InputManager : MonoBehaviour {
 			var station = info1.transform.GetComponent<Station> ();
 			if (station != null) {
 				if (previouslyRendered == null || station.StationData.id != previouslyRendered.id) {
+					StationImage.enabled = true;
 					StationImage.texture = station.StationData.texture;
-					//Mapper.Bridge.GetCityImageTexture (Mapper.Stations, station.StationData, (texture) => {
-					//	StationImage.texture = texture;
-					//});
+
 					StationName.text = station.StationData.name;
 				}
-			} else {
-				Debug.Log ("foo");
-				StationImage.texture = null;
-				previouslyRendered = null;
 			}
+		} else {
+			StationImage.enabled = false;
+			StationName.text = "";
+			previouslyRendered = null;
 		}
 	}
 
