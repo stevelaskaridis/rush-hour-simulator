@@ -78,7 +78,7 @@ public class Rail : Track {
 		// start moving the wagons to the other side of the rail
 		Vector3 positionIncrementPerWagon = (wagonStartPos2 - wagonStartPos1).normalized * (wagonXDimension*wagonScale);
 		// start from endpos and then subtract from it for each wagon which is later in the list
-		Vector3 endWagonPosition = wagonStartPos2;// - positionIncrementPerWagon* wagons1.Count(); // looks better in the long run if it actually reaches the station
+		Vector3 endWagonPosition = wagonStartPos2 - positionIncrementPerWagon * wagons1.Count; // looks better in the long run if it actually reaches the station
 		foreach (var wagon in wagons1){
 			endWagonPosition.z = -0.5f;
 			wagon.MoveToPosition(endWagonPosition);
@@ -89,7 +89,7 @@ public class Rail : Track {
 		// start moving the wagons to the other side of the rail
 		positionIncrementPerWagon = (wagonStartPos1 - wagonStartPos2).normalized * (wagonXDimension*wagonScale);
 		// start from endpos and then subtract from it for each wagon which is later in the list
-		endWagonPosition = wagonStartPos1;// - positionIncrementPerWagon * wagons1.Count; // looks better in the long run if it actually reaches the station
+		endWagonPosition = wagonStartPos1 - positionIncrementPerWagon * wagons2.Count; // looks better in the long run if it actually reaches the station
 		foreach (var wagon in wagons2){
 			endWagonPosition.z = -0.5f;
 			wagon.MoveToPosition(endWagonPosition);
