@@ -11,6 +11,7 @@ public class StationData
 	public string imageUrl;
 	public int imageWidth;
 	public int imageHeight;
+	public Texture2D texture;
 }
 
 public class Station : MonoBehaviour {
